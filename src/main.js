@@ -5,6 +5,7 @@ import { createSortTemplate } from './view/sort.js';
 import { createFilmsTemplate } from './view/films.js';
 import { createFilmCardTemplate } from './view/film-card.js';
 import { createShowMoreButtonTemplate } from './view/show-more-button.js';
+import { renderMovie } from './mock/movie.js';
 
 const FILM_CARD_COUNT = 5;
 const TOP_FILM_CARD_COUNT = 2;

@@ -86,6 +86,7 @@ const COUNTIES = [
 
 
 export const renderMovie = (id) => {
+  const title = getRandomArrayElement(TITLES);
   const ratingA = getRandomInteger(0, HIGH_RATING);
   const ratingB = +`${ratingA === 10 ? ratingA : ratingA + `.${getRandomInteger(0, 9)}`}`;
   const comments = [];
@@ -96,29 +97,23 @@ export const renderMovie = (id) => {
 
   return {
     id: id,
-    movie_info: {
-      title: getRandomArrayElement(TITLES),
-      alternative_title: `${getRandomArrayElement(TITLES)} alternative.`,
-      rating: ratingB,
-      poster: getRandomArrayElement(POSTERS),
-      age_rating: getRandomArrayElement(AGE_RATINGS),
-      director: getRandomArrayElement(DIRECTORS),
-      writers: getRandomArray(WRITERS),
-      actors: getRandomArray(ACTORS),
-      release: {
-        date: dayjs().toDate(),
-        release_country: getRandomArrayElement(COUNTIES),
-      },
-      runtime: `${getRandomInteger(0, MAX_HOURS)}h ${getRandomInteger(0, MAX_MINUTES)}m`,
-      genre: getRandomArray(GENRES),
-      description: getRandomArrayElement(DESCRIPTIONS),
-    },
+    title: title,
+    alternative_title: `re: ${title}`,
+    rating: ratingB,
+    poster: getRandomArrayElement(POSTERS),
+    age_rating: getRandomArrayElement(AGE_RATINGS),
+    director: getRandomArrayElement(DIRECTORS),
+    writers: getRandomArray(WRITERS),
+    actors: getRandomArray(ACTORS),
+    date: dayjs().toDate(),
+    release_country: getRandomArrayElement(COUNTIES),
+    duration: `${getRandomInteger(0, MAX_HOURS)}h ${getRandomInteger(0, MAX_MINUTES)}m`,
+    genre: getRandomArray(GENRES),
+    description: getRandomArrayElement(DESCRIPTIONS),
     comment: comments,
-    user_details: {
-      isWatchlist: Boolean(getRandomInteger(0, 1)),
-      isHistory: Boolean(getRandomInteger(0, 1)),
-      isFavorite: Boolean(getRandomInteger(0, 1)),
-      watching_date: dayjs().toDate(),
-    },
+    isWatchList: Boolean(getRandomInteger(0, 1)),
+    isHistory: Boolean(getRandomInteger(0, 1)),
+    isFavorite: Boolean(getRandomInteger(0, 1)),
+    watching_date: dayjs().toDate(),
   };
 };

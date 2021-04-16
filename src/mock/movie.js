@@ -2,7 +2,7 @@ import { getRandomArray, getRandomArrayElement, getRandomInteger } from '../util
 import dayjs from 'dayjs';
 import { getComment } from './comment.js';
 const HIGH_RATING = 10;
-const COMMENT_COUNT = 5;
+const COMMENT_COUNT = 10;
 const MAX_HOURS = 6;
 const MAX_MINUTES = 59;
 const DESCRIPTIONS = [
@@ -91,29 +91,35 @@ export const renderMovie = (id) => {
   const ratingB = +`${ratingA === 10 ? ratingA : ratingA + `.${getRandomInteger(0, 9)}`}`;
   const comments = [];
 
-  for (let i = 0; i < COMMENT_COUNT; i++) {
+  for (let i = 0; i < getRandomInteger(0, COMMENT_COUNT); i++) {
     comments[i] = getComment(i);
   }
 
   return {
     id: id,
-    title: title,
-    alternative_title: `re: ${title}`,
-    rating: ratingB,
-    poster: getRandomArrayElement(POSTERS),
-    age_rating: getRandomArrayElement(AGE_RATINGS),
-    director: getRandomArrayElement(DIRECTORS),
-    writers: getRandomArray(WRITERS),
-    actors: getRandomArray(ACTORS),
-    date: dayjs().toDate(),
-    release_country: getRandomArrayElement(COUNTIES),
-    duration: `${getRandomInteger(0, MAX_HOURS)}h ${getRandomInteger(0, MAX_MINUTES)}m`,
-    genre: getRandomArray(GENRES),
-    description: getRandomArrayElement(DESCRIPTIONS),
-    comment: comments,
-    isWatchList: Boolean(getRandomInteger(0, 1)),
-    isHistory: Boolean(getRandomInteger(0, 1)),
-    isFavorite: Boolean(getRandomInteger(0, 1)),
-    watching_date: dayjs().toDate(),
+    movie_info: {
+      title: title,
+      alternative_title: `re: ${title}`,
+      rating: ratingB,
+      poster: getRandomArrayElement(POSTERS),
+      age_rating: getRandomArrayElement(AGE_RATINGS),
+      director: getRandomArrayElement(DIRECTORS),
+      writers: getRandomArray(WRITERS, getRandomInteger(1, 4)),
+      actors: getRandomArray(ACTORS, getRandomInteger(2, 6)),
+      duration: `${getRandomInteger(0, MAX_HOURS)}h ${getRandomInteger(0, MAX_MINUTES)}m`,
+      genre: getRandomArray(GENRES, getRandomInteger(1, 6)),
+      description: getRandomArrayElement(DESCRIPTIONS),
+    },
+    release: {
+      date: dayjs().toDate(),
+      release_country: getRandomArrayElement(COUNTIES),
+    },
+    comments: comments,
+    user_details: {
+      isWatchList: Boolean(getRandomInteger(0, 1)),
+      isHistory: Boolean(getRandomInteger(0, 1)),
+      isFavorite: Boolean(getRandomInteger(0, 1)),
+      watching_date: dayjs().toDate(),
+    },
   };
 };

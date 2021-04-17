@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 
-export const getCommentTemplate = (comments) => {
+export const createCommentTemplate = (comments) => {
   return Object.values(comments).map(({ author, comment, date, emotion }) => `
     <li class='film-details__comment'>
       <span class='film-details__comment-emoji'>

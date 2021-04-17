@@ -1,4 +1,4 @@
-import { EMOTIONS } from '../const.js';
+import { EMOJIS } from '../const.js';
 import { getRandomArrayElement } from '../utils/common.js';
 import dayjs from 'dayjs';
 const AUTHORS = [
@@ -24,6 +24,6 @@ export const getComment = (id) => {
     author: getRandomArrayElement(AUTHORS),
     comment: getRandomArrayElement(COMMENTS),
     date: dayjs().toDate(),
-    emotion: getRandomArrayElement(EMOTIONS),
+    emotion: getRandomArrayElement(EMOJIS),
   };
 };

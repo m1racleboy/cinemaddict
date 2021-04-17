@@ -75,7 +75,7 @@ const ACTORS = [
   'На что я трачу свою жизнь, печатая это :(',
 ];
 
-const COUNTIES = [
+const COUNTRIES = [
   'Japan',
   'Russia',
   'USA',
@@ -85,7 +85,7 @@ const COUNTIES = [
 ];
 
 
-export const renderMovie = (id) => {
+export const createMovieMock = (id) => {
   const title = getRandomArrayElement(TITLES);
   const ratingA = getRandomInteger(0, HIGH_RATING);
   const ratingB = +`${ratingA === 10 ? ratingA : ratingA + `.${getRandomInteger(0, 9)}`}`;
@@ -112,7 +112,7 @@ export const renderMovie = (id) => {
     },
     release: {
       date: dayjs().toDate(),
-      release_country: getRandomArrayElement(COUNTIES),
+      release_country: getRandomArrayElement(COUNTRIES),
     },
     comments: comments,
     user_details: {

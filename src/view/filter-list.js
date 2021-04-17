@@ -1,4 +1,4 @@
-const createMainNavigationItemTemplate = (filters) => {
+const createFilterItemTemplate = (filters) => {
   const { name, count } = filters;
   String.prototype.capitalize = function () {
     return this.charAt(0).toUpperCase() + this.slice(1);
@@ -8,9 +8,9 @@ const createMainNavigationItemTemplate = (filters) => {
   `;
 };
 
-export const createMainNavigationTemplate = (filterItems) => {
+export const createFilterTemplate = (filterItems) => {
   const filterItemsTemplate = filterItems
-    .map((filter) => createMainNavigationItemTemplate(filter))
+    .map((filter) => createFilterItemTemplate(filter))
     .join('');
 
   return `

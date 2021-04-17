@@ -7,7 +7,7 @@ const taskToFilterMap = {
     .filter((movie) => movie.user_details.isFavorite).length,
 };
 
-export const generateFilter = (movies) => {
+export const createFilter = (movies) => {
   return Object.entries(taskToFilterMap).map(([filterName, countTasks]) => {
     return {
       name: filterName,

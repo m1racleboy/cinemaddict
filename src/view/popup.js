@@ -1,5 +1,14 @@
 import dayjs from 'dayjs';
-import { getCommentTemplate } from './comments-list.js';
+import { createCommentTemplate } from './comment-list.js';
+import { EMOJIS } from '../const.js';
+const createEmojiTemplate = (emoji) => {
+  return `
+    <input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}'>
+    <label class='film-details__emoji-label' for='emoji-${emoji}'>
+      <img src='./images/emoji/${emoji}.png' width='30' height='30' alt='emoji'>
+    </label>
+  `;
+};
 
 export const createPopupTemplate = (movie) => {
   const {
@@ -15,10 +24,14 @@ export const createPopupTemplate = (movie) => {
     comments,
   } = movie;
 
-  const getChecked = (bln) => bln ? 'checked' : '';
+  const getChecked = (check) => check ? 'checked' : '';
 
   const commentsCount = comments.length;
-  const commentsTemplate = getCommentTemplate(comments);
+  const commentsTemplate = createCommentTemplate(comments);
+
+  const emojiItemsTemplate = EMOJIS
+    .map((emoji) => createEmojiTemplate(emoji))
+    .join('');
 
   return `
     <section class='film-details visually-hidden'>
@@ -97,22 +110,7 @@ export const createPopupTemplate = (movie) => {
                 <textarea class='film-details__comment-input' placeholder='Select reaction below and write comment here' name='comment'></textarea>
               </label>
               <div class='film-details__emoji-list'>
-                <input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-smile' value='smile'>
-                <label class='film-details__emoji-label' for='emoji-smile'>
-                  <img src='./images/emoji/smile.png' width='30' height='30' alt='emoji'>
-                </label>
-                <input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-sleeping' value='sleeping'>
-                <label class='film-details__emoji-label' for='emoji-sleeping'>
-                  <img src='./images/emoji/sleeping.png' width='30' height='30' alt='emoji'>
-                </label>
-                <input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-puke' value='puke'>
-                <label class='film-details__emoji-label' for='emoji-puke'>
-                  <img src='./images/emoji/puke.png' width='30' height='30' alt='emoji'>
-                </label>
-                <input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-angry' value='angry'>
-                <label class='film-details__emoji-label' for='emoji-angry'>
-                  <img src='./images/emoji/angry.png' width='30' height='30' alt='emoji'>
-                </label>
+                ${emojiItemsTemplate}
               </div>
             </div>
           </section>

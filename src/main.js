@@ -57,11 +57,11 @@ const filmsListElement = films.querySelector('.films-list');
 if (movies.length > MOVIES_COUNT_PER_STEP) {
   let renderedTaskCount = MOVIES_COUNT_PER_STEP;
   render(filmsListElement, createShowMoreButtonTemplate(), 'beforeend');
-
   const showMoreButton = filmsListElement.querySelector('.films-list__show-more');
 
-  showMoreButton.addEventListener('click', (evt) => {
+  const showMoreHandler = (evt) => {
     evt.preventDefault();
+
     movies
       .slice(renderedTaskCount, renderedTaskCount + MOVIES_COUNT_PER_STEP)
       .forEach((movie) => render(allMoviesList, createMovieCardTemplate(movie), 'beforeend'));
@@ -71,7 +71,9 @@ if (movies.length > MOVIES_COUNT_PER_STEP) {
     if (renderedTaskCount >= movies.length) {
       showMoreButton.remove();
     }
-  });
+  };
+
+  showMoreButton.addEventListener('click', showMoreHandler);
 }
 
 renderMoviesCard();

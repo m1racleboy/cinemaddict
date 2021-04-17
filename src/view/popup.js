@@ -10,6 +10,17 @@ const createEmojiTemplate = (emoji) => {
   `;
 };
 
+const getChecked = (check) => check ? 'checked' : '';
+
+const createControlTemplate = (control) => {
+  const { name, title, check } = control;
+
+  return `
+    <input type='checkbox' class='film-details__control-input visually-hidden' id='${name}' name='${name}' ${getChecked(check)}>
+    <label for='${name}' class='film-details__control-label film-details__control-label--${name}'>${title}</label>
+  `;
+};
+
 export const createPopupTemplate = (movie) => {
   const {
     movie_info: {
@@ -24,13 +35,38 @@ export const createPopupTemplate = (movie) => {
     comments,
   } = movie;
 
-  const getChecked = (check) => check ? 'checked' : '';
 
   const commentsCount = comments.length;
   const commentsTemplate = createCommentTemplate(comments);
 
   const emojiItemsTemplate = EMOJIS
     .map((emoji) => createEmojiTemplate(emoji))
+    .join('');
+
+  const Controls = [
+    {
+      name: 'watchlist',
+      title: 'Add to watchlist',
+      check: isWatchList,
+    },
+    {
+      name: 'watched',
+      title: 'Already watched',
+      check: isHistory,
+    },
+    {
+      name: 'favorite',
+      title: 'Add to favorites',
+      check: isFavorite,
+    },
+  ];
+
+  Controls.map((control) => {
+    return control;
+  });
+
+  const controlItemsTemplate = Controls
+    .map((control) => createControlTemplate(control))
     .join('');
 
   return `
@@ -90,12 +126,7 @@ export const createPopupTemplate = (movie) => {
             </div>
           </div>
           <section class='film-details__controls'>
-            <input type='checkbox' class='film-details__control-input visually-hidden' id='watchlist' name='watchlist' ${getChecked(isWatchList)}>
-            <label for='watchlist' class='film-details__control-label film-details__control-label--watchlist'>Add to watchlist</label>
-            <input type='checkbox' class='film-details__control-input visually-hidden' id='watched' name='watched ${getChecked(isHistory)}'>
-            <label for='watched' class='film-details__control-label film-details__control-label--watched'>Already watched</label>
-            <input type='checkbox' class='film-details__control-input visually-hidden' id='favorite' name='favorite' ${getChecked(isFavorite)}>
-            <label for='favorite' class='film-details__control-label film-details__control-label--favorite'>Add to favorites</label>
+            ${controlItemsTemplate}
           </section>
         </div>
         <div class='film-details__bottom-container'>

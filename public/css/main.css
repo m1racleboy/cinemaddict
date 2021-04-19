@@ -1104,3 +1104,12 @@ button {
   padding-top: 50px;
   padding-bottom: 50px;
 }
+.film-card__info {
+  width: 230px;
+}
+.film-card__info .film-card__genre {
+  display: block;
+  word-break: break-all;
+  overflow: hidden;
+  width: 230px;
+}

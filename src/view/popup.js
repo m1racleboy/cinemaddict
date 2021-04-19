@@ -24,7 +24,7 @@ const createControlTemplate = (control) => {
 export const createPopupTemplate = (movie) => {
   const {
     movie_info: {
-      title, alternative_title, poster, age_rating, rating, director, writers, actors, genre, description, duration,
+      title, poster, age_rating, rating, director, writers, actors, genre, description, duration,
     },
     release: {
       date, release_country,
@@ -70,7 +70,7 @@ export const createPopupTemplate = (movie) => {
     .join('');
 
   return `
-    <section class='film-details visually-hidden'>
+    <section class='film-details'>
       <form class='film-details__inner' action='' method='get'>
         <div class='film-details__top-container'>
           <div class='film-details__close'>
@@ -85,7 +85,7 @@ export const createPopupTemplate = (movie) => {
               <div class='film-details__info-head'>
                 <div class='film-details__title-wrap'>
                   <h3 class='film-details__title'>${title}</h3>
-                  <p class='film-details__title-original'>Original: ${alternative_title}</p>
+                  <p class='film-details__title-original'>Original: ${title}</p>
                 </div>
                 <div class='film-details__rating'>
                   <p class='film-details__total-rating'>${rating}</p>

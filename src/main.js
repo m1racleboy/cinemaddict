@@ -14,9 +14,9 @@ const MOVIES_COUNT = 20;
 const MOVIES_COUNT_PER_STEP = 5;
 const TOP_MOVIES_COUNT = 2;
 const siteBodyElement = document.querySelector('body');
-const siteMainElement = document.querySelector('.main');
-const siteHeaderElement = document.querySelector('.header');
-const siteFooterStatsElement = document.querySelector('.footer__statistics');
+const siteMainElement = siteBodyElement.querySelector('.main');
+const siteHeaderElement = siteBodyElement.querySelector('.header');
+const siteFooterStatsElement = siteBodyElement.querySelector('.footer__statistics');
 
 const movies = new Array(MOVIES_COUNT).fill().map((arr, i) => createMovieMock(i));
 const filters = createFilter(movies);
@@ -48,7 +48,7 @@ render(siteMainElement, createFilterTemplate(filters), 'beforeend');
 render(siteMainElement, createSortTemplate(), 'beforeend');
 render(siteMainElement, createMoviesTemplate(), 'beforeend');
 
-const films = document.querySelector('.films');
+const films = siteMainElement.querySelector('.films');
 const allMoviesList = films.querySelector('.films-list__container');
 const topRatedFilmsList = films.querySelector('.films-list--extra > .films-list__container');
 const mostCommentedFilmsList = films.querySelector('.films-list--extra:last-child > .films-list__container');

@@ -84,17 +84,6 @@ const COUNTRIES = [
   'Germany',
 ];
 
-const getStringFromArray = (arr) => {
-  let str = '';
-  str += arr.reduce((acc, value, i, array) => {
-    if (arr.length > 1) {
-      return `${acc} ${value}${i === array.length - 1 ? '.' : ', '}`;
-    }
-    return acc + '.';
-  }, '');
-  return str;
-};
-
 export const createMovieMock = (id) => {
   const title = getRandomArrayElement(TITLES);
   const ratingA = getRandomInteger(0, HIGH_RATING);
@@ -109,15 +98,14 @@ export const createMovieMock = (id) => {
     id: id,
     movie_info: {
       title: title,
-      alternative_title: `re: ${title}`,
       rating: ratingB,
       poster: getRandomArrayElement(POSTERS),
       age_rating: getRandomArrayElement(AGE_RATINGS),
       director: getRandomArrayElement(DIRECTORS),
-      writers: getStringFromArray(getRandomArray(WRITERS, getRandomInteger(1, 4))),
-      actors: getStringFromArray(getRandomArray(ACTORS, getRandomInteger(1, 6))),
+      writers: getRandomArray(WRITERS, getRandomInteger(1, 4)).join(', '),
+      actors: getRandomArray(ACTORS, getRandomInteger(1, 6)).join(', '),
       duration: `${getRandomInteger(0, MAX_HOURS)}h ${getRandomInteger(0, MAX_MINUTES)}m`,
-      genre: getStringFromArray(getRandomArray(GENRES, getRandomInteger(1, 6))),
+      genre: getRandomArray(GENRES, getRandomInteger(1, 6)).join(', '),
       description: getRandomArrayElement(DESCRIPTIONS),
     },
     release: {

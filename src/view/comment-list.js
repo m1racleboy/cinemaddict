@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
+import { createElement } from '../utils/common.js';
 
-export const createCommentTemplate = (comments) => {
+const createCommentTemplate = (comments) => {
   return Object.values(comments).map(({ author, comment, date, emotion }) => `
     <li class='film-details__comment'>
       <span class='film-details__comment-emoji'>
@@ -17,3 +18,25 @@ export const createCommentTemplate = (comments) => {
     </li>
   `).join('');
 };
+
+export default class Comment {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createCommentTemplate();
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

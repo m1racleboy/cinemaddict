@@ -1,7 +1,10 @@
 import dayjs from 'dayjs';
+import { createElement } from '../utils/common.js';
+
 const MAX_DESCRIPTION_LENGTH = 139;
 const CONTROL_ACTIVE = 'film-card__controls-item--active';
-export const createMovieCardTemplate = (movie = {}) => {
+
+const createMovieCardTemplate = (movie = {}) => {
   const {
     movie_info: {
       title, rating, poster, description, duration, genre,
@@ -34,3 +37,26 @@ export const createMovieCardTemplate = (movie = {}) => {
   </article>
   `;
 };
+
+export default class MovieCard {
+  constructor(movie) {
+    this._movie = movie;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createMovieCardTemplate(this._movie);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

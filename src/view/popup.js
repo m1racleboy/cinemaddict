@@ -1,6 +1,8 @@
 import dayjs from 'dayjs';
-import { createCommentTemplate } from './comment-list.js';
+import CommentListView from './comment-list.js';
+import { createElement } from '../utils/common.js';
 import { EMOJIS } from '../const.js';
+
 const createEmojiTemplate = (emoji) => {
   return `
     <input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}'>
@@ -21,7 +23,7 @@ const createControlTemplate = (control) => {
   `;
 };
 
-export const createPopupTemplate = (movie) => {
+const createPopupTemplate = (movie) => {
   const {
     movie_info: {
       title, poster, age_rating, rating, director, writers, actors, genre, description, duration,
@@ -37,7 +39,6 @@ export const createPopupTemplate = (movie) => {
 
 
   const commentsCount = comments.length;
-  const commentsTemplate = createCommentTemplate(comments);
 
   const emojiItemsTemplate = EMOJIS
     .map((emoji) => createEmojiTemplate(emoji))
@@ -133,7 +134,7 @@ export const createPopupTemplate = (movie) => {
           <section class='film-details__comments-wrap'>
             <h3 class='film-details__comments-title'>Comments <span class='film-details__comments-count'>${commentsCount}</span></h3>
             <ul class='film-details__comments-list'>
-              ${commentsTemplate}
+              ${new CommentListView(comments).getElement()}
             </ul>
             <div class='film-details__new-comment'>
               <div class='film-details__add-emoji-label'></div>
@@ -150,3 +151,26 @@ export const createPopupTemplate = (movie) => {
     </section>
   `;
 };
+
+export default class Popup {
+  constructor(movie) {
+    this._movie = movie;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createPopupTemplate(this._movie);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

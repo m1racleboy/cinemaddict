@@ -1,3 +1,5 @@
+import { createElement } from '../utils/common.js';
+
 const createFilterItemTemplate = (filters) => {
   const { name, count } = filters;
   String.prototype.capitalize = function () {
@@ -8,7 +10,7 @@ const createFilterItemTemplate = (filters) => {
   `;
 };
 
-export const createFilterTemplate = (filterItems) => {
+const createFilterTemplate = (filterItems) => {
   const filterItemsTemplate = filterItems
     .map((filter) => createFilterItemTemplate(filter))
     .join('');
@@ -22,3 +24,26 @@ export const createFilterTemplate = (filterItems) => {
     <a href="#stats" class="main-navigation__additional">Stats</a>
   </nav>`;
 };
+
+export default class FilterList {
+  constructor(filter) {
+    this._filter = filter;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createFilterTemplate(this._filter);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

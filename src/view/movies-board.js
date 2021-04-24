@@ -1,9 +1,7 @@
 import { createElement } from '../utils/common.js';
 
 const createMoviesBoardTemplate = () => {
-  return `
-    <section class="films"></section>
-  `;
+  return '<section class="films"></section>';
 };
 
 export default class MoviesBoard {

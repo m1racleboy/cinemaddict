@@ -3,7 +3,7 @@ import { createElement } from '../utils/common.js';
 const createUserRankTemplate = (movies) => {
   let count = 0;
 
-  movies.forEach(movie => {
+  movies.forEach((movie) => {
     if (movie.user_details.isWatchList) {
       count++;
     }
@@ -11,13 +11,13 @@ const createUserRankTemplate = (movies) => {
 
   const rank = {
     novice: {
-      name: 'novice'
+      name: 'novice',
     },
     fan: {
-      name: 'fan'
+      name: 'fan',
     },
     movieBuff: {
-      name: 'movie buff'
+      name: 'movie buff',
     },
   };
 

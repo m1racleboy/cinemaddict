@@ -1,7 +1,7 @@
 import UserRankView from './view/user-rank.js';
 import FooterStatsView from './view/footer-stats.js';
 import FilterListView from './view/filter-list.js';
-import SortView from './view/sort.js';
+import SortView from './view/sort-list.js';
 import MoviesBoardView from './view/movies-board.js';
 import TopMoviesView from './view/top-movies.js';
 import MostCommentedMoviesView from './view/most-commented-movies.js';
@@ -13,10 +13,12 @@ import PopupView from './view/popup.js';
 import { createMovieMock } from './mock/movie.js';
 import { createFilter } from './mock/filter.js';
 import { render, RenderPosition } from './utils/common.js';
+import { createSort } from './mock/sort.js';
 
 const MOVIES_COUNT = 20;
 const MOVIES_COUNT_PER_STEP = 5;
 const TOP_MOVIES_COUNT = 2;
+const ESCAPE_KEY = 'Escape';
 const siteBodyElement = document.querySelector('body');
 const siteMainElement = siteBodyElement.querySelector('.main');
 const siteHeaderElement = siteBodyElement.querySelector('.header');
@@ -24,7 +26,7 @@ const siteFooterStatsElement = siteBodyElement.querySelector('.footer__statistic
 
 const movies = new Array(MOVIES_COUNT).fill().map((arr, i) => createMovieMock(i));
 const filters = createFilter(movies);
-
+const sorts = createSort();
 const renderMovie = (movieListElement, movie) => {
   const movieCardComponent = new MovieCardView(movie);
   const popupComponent = new PopupView(movie);
@@ -38,7 +40,7 @@ const renderMovie = (movieListElement, movie) => {
   };
 
   const onEscKeyDown = (evt) => {
-    if (evt.key === 'Escape' || evt.key === 'Esc') {
+    if (evt.key === ESCAPE_KEY) {
       evt.preventDefault();
       replacePopupToCard();
       document.removeEventListener('keydown', onEscKeyDown);
@@ -139,8 +141,8 @@ const renderBoard = (boardContainer, boardMovies) => {
   renderMostCommentedMoviesCards();
 };
 
-render(siteHeaderElement, new UserRankView().getElement(), RenderPosition.BEFOREEND);
+render(siteHeaderElement, new UserRankView(movies).getElement(), RenderPosition.BEFOREEND);
 render(siteMainElement, new FilterListView(filters).getElement(), RenderPosition.BEFOREEND);
-render(siteMainElement, new SortView().getElement(), RenderPosition.BEFOREEND);
+render(siteMainElement, new SortView(sorts).getElement(), RenderPosition.BEFOREEND);
 render(siteFooterStatsElement, new FooterStatsView(movies.length).getElement(), RenderPosition.BEFOREEND);
 renderBoard(siteMainElement, movies);

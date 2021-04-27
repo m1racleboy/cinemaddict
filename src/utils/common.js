@@ -39,13 +39,3 @@ export const createElement = (template) => {
 
   return newElement.firstChild;
 };
-
-export const sortByDecreasing = (movies) => {
-  movies.sort((a, b) => {
-    if (a.value < b.value) {
-      return 1; }
-    if (a.value > b.value) {
-      return -1; }
-    return 0;
-  });
-}

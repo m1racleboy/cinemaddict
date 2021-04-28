@@ -1,12 +1,13 @@
 import { createElement } from '../utils/common.js';
 
-const createSortItemTemplate = (sorts) => {
-  const setActiveClass = sorts.default ? 'sort__button--active' : '';
-  return `<li><a href="#" class="sort__button ${setActiveClass}">${Object.values(sorts)}</a></li>`;
+const createSortItemTemplate = (value) => {
+  const DEFAULT_SORT_VALUE = 'Sort by default';
+  const setActiveClass = value === DEFAULT_SORT_VALUE ? 'sort__button--active' : '';
+  return `<li><a href="#" class="sort__button ${setActiveClass}">${value}</a></li>`;
 };
 
 const createSortTemplate = (sortItems) => {
-  const sortItemsTemplate = sortItems
+  const sortItemsTemplate = Object.values(sortItems)
     .map((sort) => createSortItemTemplate(sort))
     .join('');
 

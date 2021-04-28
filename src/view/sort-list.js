@@ -1,8 +1,7 @@
 import { createElement } from '../utils/common.js';
-
+import { Sort } from '../const.js';
 const createSortItemTemplate = (value) => {
-  const DEFAULT_SORT_VALUE = 'Sort by default';
-  const setActiveClass = value === DEFAULT_SORT_VALUE ? 'sort__button--active' : '';
+  const setActiveClass = value === Sort.DEFAULT ? 'sort__button--active' : '';
   return `<li><a href="#" class="sort__button ${setActiveClass}">${value}</a></li>`;
 };
 

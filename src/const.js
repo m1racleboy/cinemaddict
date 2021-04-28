@@ -1,6 +1,6 @@
 export const EMOJIS = ['smile', 'sleeping', 'puke', 'angry'];
 
-export const sorts = [
+export const Sort = [
   {
     default: 'Sort by default',
   },

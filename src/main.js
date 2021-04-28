@@ -13,7 +13,7 @@ import PopupView from './view/popup.js';
 import { createMovieMock } from './mock/movie.js';
 import { createFilter } from './mock/filter.js';
 import { render, RenderPosition } from './utils/common.js';
-import { sorts } from './const.js';
+import { Sort } from './const.js';
 
 const MOVIES_COUNT = 20;
 const MOVIES_COUNT_PER_STEP = 5;
@@ -142,6 +142,6 @@ const renderBoard = (boardContainer, boardMovies) => {
 
 render(siteHeaderElement, new UserRankView(movies).getElement(), RenderPosition.BEFOREEND);
 render(siteMainElement, new FilterListView(filters).getElement(), RenderPosition.BEFOREEND);
-render(siteMainElement, new SortListView(sorts).getElement(), RenderPosition.BEFOREEND);
+render(siteMainElement, new SortListView(Sort).getElement(), RenderPosition.BEFOREEND);
 render(siteFooterStatsElement, new FooterStatsView(movies.length).getElement(), RenderPosition.BEFOREEND);
 renderBoard(siteMainElement, movies);

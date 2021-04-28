@@ -12,7 +12,7 @@ const createUserRankTemplate = (movies) => {
     }
   });
 
-  const rank = {
+  const Rank = {
     novice: {
       name: 'Novice',
     },
@@ -30,13 +30,13 @@ const createUserRankTemplate = (movies) => {
     return '<section class="header__profile profile"></section>';
   }
   else if (count > 0 && count <= MAX_NOVICE_RANK_NUMBER) {
-    userRank = rank.novice;
+    userRank = Rank.novice;
   }
   else if (count > MAX_NOVICE_RANK_NUMBER && count < MAX_FAN_RANK_NUMBER) {
-    userRank = rank.fan;
+    userRank = Rank.fan;
   }
   else {
-    userRank = rank.movieBuff;
+    userRank = Rank.movieBuff;
   }
   return `<section class="header__profile profile">
             <p class="profile__rating">${userRank.name}</p>

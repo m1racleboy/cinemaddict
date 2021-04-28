@@ -1,7 +1,7 @@
 import UserRankView from './view/user-rank.js';
 import FooterStatsView from './view/footer-stats.js';
 import FilterListView from './view/filter-list.js';
-import SortView from './view/sort-list.js';
+import SortListView from './view/sort-list.js';
 import MoviesBoardView from './view/movies-board.js';
 import TopMoviesView from './view/top-movies.js';
 import MostCommentedMoviesView from './view/most-commented-movies.js';
@@ -13,7 +13,7 @@ import PopupView from './view/popup.js';
 import { createMovieMock } from './mock/movie.js';
 import { createFilter } from './mock/filter.js';
 import { render, RenderPosition } from './utils/common.js';
-import { createSort } from './mock/sort.js';
+import { sorts } from './const.js';
 
 const MOVIES_COUNT = 20;
 const MOVIES_COUNT_PER_STEP = 5;
@@ -26,7 +26,6 @@ const siteFooterStatsElement = siteBodyElement.querySelector('.footer__statistic
 
 const movies = new Array(MOVIES_COUNT).fill().map((arr, i) => createMovieMock(i));
 const filters = createFilter(movies);
-const sorts = createSort();
 const renderMovie = (movieListElement, movie) => {
   const movieCardComponent = new MovieCardView(movie);
   const popupComponent = new PopupView(movie);
@@ -143,6 +142,7 @@ const renderBoard = (boardContainer, boardMovies) => {
 
 render(siteHeaderElement, new UserRankView(movies).getElement(), RenderPosition.BEFOREEND);
 render(siteMainElement, new FilterListView(filters).getElement(), RenderPosition.BEFOREEND);
-render(siteMainElement, new SortView(sorts).getElement(), RenderPosition.BEFOREEND);
+render(siteMainElement, new SortListView(sorts).getElement(), RenderPosition.BEFOREEND);
+siteMainElement.querySelector('.sort__button').classList.add('sort__button--active');
 render(siteFooterStatsElement, new FooterStatsView(movies.length).getElement(), RenderPosition.BEFOREEND);
 renderBoard(siteMainElement, movies);

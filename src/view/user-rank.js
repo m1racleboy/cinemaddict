@@ -1,5 +1,8 @@
 import { createElement } from '../utils/common.js';
 
+const MAX_NOVICE_RANK_NUMBER = 10;
+const MAX_FAN_RANK_NUMBER = 21;
+
 const createUserRankTemplate = (movies) => {
   let count = 0;
 
@@ -11,13 +14,13 @@ const createUserRankTemplate = (movies) => {
 
   const rank = {
     novice: {
-      name: 'novice',
+      name: 'Novice',
     },
     fan: {
-      name: 'fan',
+      name: 'Fan',
     },
     movieBuff: {
-      name: 'movie buff',
+      name: 'Movie buff',
     },
   };
 
@@ -26,10 +29,10 @@ const createUserRankTemplate = (movies) => {
   if (count === 0) {
     return '<section class="header__profile profile"></section>';
   }
-  else if (count > 0 && count < 11) {
+  else if (count > 0 && count <= MAX_NOVICE_RANK_NUMBER) {
     userRank = rank.novice;
   }
-  else if (count > 10 && count < 21) {
+  else if (count > MAX_NOVICE_RANK_NUMBER && count < MAX_FAN_RANK_NUMBER) {
     userRank = rank.fan;
   }
   else {

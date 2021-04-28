@@ -13,15 +13,9 @@ const createUserRankTemplate = (movies) => {
   });
 
   const Rank = {
-    novice: {
-      name: 'Novice',
-    },
-    fan: {
-      name: 'Fan',
-    },
-    movieBuff: {
-      name: 'Movie buff',
-    },
+    NOVICE: 'Novice',
+    FAN: 'Fan',
+    MOVIE_BUFF: 'Movie buff',
   };
 
   let userRank;
@@ -30,16 +24,16 @@ const createUserRankTemplate = (movies) => {
     return '<section class="header__profile profile"></section>';
   }
   else if (count > 0 && count <= MAX_NOVICE_RANK_NUMBER) {
-    userRank = Rank.novice;
+    userRank = Rank.NOVICE;
   }
   else if (count > MAX_NOVICE_RANK_NUMBER && count < MAX_FAN_RANK_NUMBER) {
-    userRank = Rank.fan;
+    userRank = Rank.FAN;
   }
   else {
-    userRank = Rank.movieBuff;
+    userRank = Rank.MOVIE_BUFF;
   }
   return `<section class="header__profile profile">
-            <p class="profile__rating">${userRank.name}</p>
+            <p class="profile__rating">${userRank}</p>
             <img class="profile__avatar" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
           </section>`;
 };

@@ -143,6 +143,5 @@ const renderBoard = (boardContainer, boardMovies) => {
 render(siteHeaderElement, new UserRankView(movies).getElement(), RenderPosition.BEFOREEND);
 render(siteMainElement, new FilterListView(filters).getElement(), RenderPosition.BEFOREEND);
 render(siteMainElement, new SortListView(sorts).getElement(), RenderPosition.BEFOREEND);
-siteMainElement.querySelector('.sort__button').classList.add('sort__button--active');
 render(siteFooterStatsElement, new FooterStatsView(movies.length).getElement(), RenderPosition.BEFOREEND);
 renderBoard(siteMainElement, movies);

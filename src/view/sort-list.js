@@ -1,7 +1,11 @@
 import { createElement } from '../utils/common.js';
 
 const createSortItemTemplate = (sorts) => {
-  return `<li><a href="#" class="sort__button">${Object.values(sorts)}</a></li>`;
+  let sortButtonActive = '';
+  if (sorts.default) {
+    sortButtonActive = 'sort__button--active';
+  }
+  return `<li><a href="#" class="sort__button ${sortButtonActive}">${Object.values(sorts)}</a></li>`;
 };
 
 const createSortTemplate = (sortItems) => {

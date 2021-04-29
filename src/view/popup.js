@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { createElement } from '../utils/common.js';
+import AbstractView from './abstract.js';
 import { EMOJIS } from '../const.js';
 
 const createEmojiTemplate = (emoji) => {
@@ -163,25 +163,25 @@ const createPopupTemplate = (movie) => {
           </section>`;
 };
 
-export default class Popup {
+export default class Popup extends AbstractView {
   constructor(movie) {
+    super();
     this._movie = movie;
     this._element = null;
+    this._clickHandler = this._clickHandler.bind(this);
   }
 
   getTemplate() {
     return createPopupTemplate(this._movie);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
+  _clickHandler(evt) {
+    evt.preventDefault();
+    this._callback.click();
   }
 
-  removeElement() {
-    this._element = null;
+  setClickHandler(callback) {
+    this._callback.click = callback;
+    this.getElement().querySelector('.film-details__close-btn').addEventListener('click', this._clickHandler);
   }
 }

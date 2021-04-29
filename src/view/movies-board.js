@@ -1,18 +1,16 @@
 import { createElement } from '../utils/common.js';
 
-const createFooterStatsTemplate = (moviesCount) => {
-  return `<p>${moviesCount} movies inside</p>`;
+const createMoviesBoardTemplate = () => {
+  return '<section class="films"></section>';
 };
 
-
-export default class FooterStats {
-  constructor(moviesCount) {
-    this._moviesCount = moviesCount;
+export default class MoviesBoard {
+  constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createFooterStatsTemplate(this._moviesCount);
+    return createMoviesBoardTemplate();
   }
 
   getElement() {

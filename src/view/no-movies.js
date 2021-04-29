@@ -1,18 +1,16 @@
 import { createElement } from '../utils/common.js';
 
-const createFooterStatsTemplate = (moviesCount) => {
-  return `<p>${moviesCount} movies inside</p>`;
+const createNoMovieTemplate = () => {
+  return '<h2 class="films-list__title">There are no movies in our database</h2>';
 };
 
-
-export default class FooterStats {
-  constructor(moviesCount) {
-    this._moviesCount = moviesCount;
+export default class NoMovie {
+  constructor() {
     this._element = null;
   }
 
   getTemplate() {
-    return createFooterStatsTemplate(this._moviesCount);
+    return createNoMovieTemplate();
   }
 
   getElement() {

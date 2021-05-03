@@ -1,4 +1,4 @@
-import { createElement } from '../utils/common.js';
+import AbstractView from './abstract.js';
 
 const MAX_NOVICE_RANK_NUMBER = 10;
 const MAX_FAN_RANK_NUMBER = 21;
@@ -38,25 +38,14 @@ const createUserRankTemplate = (movies) => {
           </section>`;
 };
 
-export default class UserRank {
+export default class UserRank extends AbstractView {
   constructor(movies) {
+    super();
     this._movies = movies;
     this._element = null;
   }
 
   getTemplate() {
     return createUserRankTemplate(this._movies);
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

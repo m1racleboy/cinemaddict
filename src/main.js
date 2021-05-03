@@ -12,7 +12,7 @@ import ShowMoreButtonView from './view/show-more-button.js';
 import PopupView from './view/popup.js';
 import { createMovieMock } from './mock/movie.js';
 import { createFilter } from './mock/filter.js';
-import { render, RenderPosition } from './utils/common.js';
+import { render, RenderPosition, replace, remove } from './utils/render.js';
 import { Sort } from './const.js';
 
 const MOVIES_COUNT = 20;
@@ -31,11 +31,11 @@ const renderMovie = (movieListElement, movie) => {
   const popupComponent = new PopupView(movie);
 
   const replaceCardToPopup = () => {
-    movieListElement.replaceChild(popupComponent.getElement(), movieCardComponent.getElement());
+    replace(popupComponent, movieCardComponent);
   };
 
   const replacePopupToCard = () => {
-    movieListElement.replaceChild(movieCardComponent.getElement(), popupComponent.getElement());
+    replace(movieCardComponent, popupComponent);
   };
 
   const onEscKeyDown = (evt) => {
@@ -47,31 +47,31 @@ const renderMovie = (movieListElement, movie) => {
     }
   };
 
-  movieCardComponent.getElement().querySelector('.film-card__poster').addEventListener('click', () => {
+  movieCardComponent.setClickHandler(() => {
     siteBodyElement.classList.add('hide-overflow');
     replaceCardToPopup();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  movieCardComponent.getElement().querySelector('.film-card__title').addEventListener('click', () => {
+  movieCardComponent.setClickHandler(() => {
     siteBodyElement.classList.add('hide-overflow');
     replaceCardToPopup();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  movieCardComponent.getElement().querySelector('.film-card__comments').addEventListener('click', () => {
+  movieCardComponent.setClickHandler(() => {
     siteBodyElement.classList.add('hide-overflow');
     replaceCardToPopup();
     document.addEventListener('keydown', onEscKeyDown);
   });
 
-  popupComponent.getElement().querySelector('.film-details__close-btn').addEventListener('click', () => {
+  popupComponent.setClickHandler(() => {
     siteBodyElement.classList.remove('hide-overflow');
     replacePopupToCard();
     document.removeEventListener('keydown', onEscKeyDown);
   });
 
-  render(movieListElement, movieCardComponent.getElement(), RenderPosition.BEFOREEND);
+  render(movieListElement, movieCardComponent, RenderPosition.BEFOREEND);
 };
 
 const renderBoard = (boardContainer, boardMovies) => {
@@ -86,7 +86,7 @@ const renderBoard = (boardContainer, boardMovies) => {
 
   const renderTopMoviesCards = () => {
     const topMoviesListComponent = new TopMoviesView();
-    render(boardComponent.getElement(), topMoviesListComponent.getElement(), RenderPosition.BEFOREEND);
+    render(boardComponent, topMoviesListComponent, RenderPosition.BEFOREEND);
     const topMoviesList = topMoviesListComponent.getElement().querySelector('.films-list--top > .films-list__container');
     boardMovies
       .slice(0, TOP_MOVIES_COUNT)
@@ -95,7 +95,7 @@ const renderBoard = (boardContainer, boardMovies) => {
 
   const renderMostCommentedMoviesCards = () => {
     const mostCommentedMoviesListComponent = new MostCommentedMoviesView();
-    render(boardComponent.getElement(), mostCommentedMoviesListComponent.getElement(), RenderPosition.BEFOREEND);
+    render(boardComponent, mostCommentedMoviesListComponent, RenderPosition.BEFOREEND);
     const mostCommentedMoviesList = mostCommentedMoviesListComponent.getElement().querySelector('.films-list--most-commented > .films-list__container');
 
     boardMovies
@@ -103,23 +103,21 @@ const renderBoard = (boardContainer, boardMovies) => {
       .forEach((boardMovie) => renderMovie(mostCommentedMoviesList, boardMovie));
   };
 
-  render(boardContainer, boardComponent.getElement(), RenderPosition.BEFOREEND);
-  render(boardComponent.getElement(), moviesListComponent.getElement(), RenderPosition.BEFOREEND);
+  render(boardContainer, boardComponent, RenderPosition.BEFOREEND);
+  render(boardComponent, moviesListComponent, RenderPosition.BEFOREEND);
   const allMoviesList = siteMainElement.querySelector('.films-list__container');
 
   if (boardMovies.length === 0) {
-    render(boardComponent.getElement(), new NoMovieView().getElement(), RenderPosition.AFTERBEGIN);
+    render(boardComponent, new NoMovieView(), RenderPosition.AFTERBEGIN);
     return;
   }
 
   if (movies.length > MOVIES_COUNT_PER_STEP) {
     let renderedTaskCount = MOVIES_COUNT_PER_STEP;
     const showMoreButtonComponent = new ShowMoreButtonView();
-    render(moviesListComponent.getElement(), showMoreButtonComponent.getElement(), RenderPosition.BEFOREEND);
+    render(moviesListComponent, showMoreButtonComponent, RenderPosition.BEFOREEND);
 
-    const showMoreHandler = (evt) => {
-      evt.preventDefault();
-
+    const showMoreHandler = () => {
       movies
         .slice(renderedTaskCount, renderedTaskCount + MOVIES_COUNT_PER_STEP)
         .forEach((movie) => renderMovie(allMoviesList, movie));
@@ -127,12 +125,11 @@ const renderBoard = (boardContainer, boardMovies) => {
       renderedTaskCount += MOVIES_COUNT_PER_STEP;
 
       if (renderedTaskCount >= movies.length) {
-        showMoreButtonComponent.getElement().remove();
-        showMoreButtonComponent.removeElement();
+        remove(showMoreButtonComponent);
       }
     };
 
-    showMoreButtonComponent.getElement().addEventListener('click', showMoreHandler);
+    showMoreButtonComponent.setClickHandler(showMoreHandler);
   }
 
   renderMoviesCards();
@@ -140,8 +137,8 @@ const renderBoard = (boardContainer, boardMovies) => {
   renderMostCommentedMoviesCards();
 };
 
-render(siteHeaderElement, new UserRankView(movies).getElement(), RenderPosition.BEFOREEND);
-render(siteMainElement, new FilterListView(filters).getElement(), RenderPosition.BEFOREEND);
-render(siteMainElement, new SortListView(Sort).getElement(), RenderPosition.BEFOREEND);
-render(siteFooterStatsElement, new FooterStatsView(movies.length).getElement(), RenderPosition.BEFOREEND);
+render(siteHeaderElement, new UserRankView(movies), RenderPosition.BEFOREEND);
+render(siteMainElement, new FilterListView(filters), RenderPosition.BEFOREEND);
+render(siteMainElement, new SortListView(Sort), RenderPosition.BEFOREEND);
+render(siteFooterStatsElement, new FooterStatsView(movies.length), RenderPosition.BEFOREEND);
 renderBoard(siteMainElement, movies);

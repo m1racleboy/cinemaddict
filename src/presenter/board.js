@@ -4,16 +4,13 @@ import TopMoviesView from '../view/top-movies.js';
 import MostCommentedMoviesView from '../view/most-commented-movies.js';
 import AllMoviesView from '../view/all-movies.js';
 import NoMovieView from '../view/no-movies.js';
-import MovieCardView from '../view/movie-card.js';
 import ShowMoreButtonView from '../view/show-more-button.js';
-import PopupView from '../view/popup.js';
 import { Sort } from '../const.js';
-import { render, RenderPosition, replace, remove } from '../utils/render.js';
-import { siteBodyElement } from '../main.js';
+import { render, RenderPosition, remove } from '../utils/render.js';
+import MoviePresenter from './movie.js';
 
 const MOVIES_COUNT_PER_STEP = 5;
 const TOP_MOVIES_COUNT = 2;
-const ESCAPE_KEY = 'Escape';
 
 export default class Board {
   constructor(boardContainer) {
@@ -52,51 +49,8 @@ export default class Board {
   }
 
   _renderMovie(movie, container) {
-    const movieCardComponent = new MovieCardView(movie);
-    const popupComponent = new PopupView(movie);
-
-    const replaceCardToPopup = () => {
-      replace(popupComponent, movieCardComponent);
-    };
-
-    const replacePopupToCard = () => {
-      replace(movieCardComponent, popupComponent);
-    };
-
-    const onEscKeyDown = (evt) => {
-      if (evt.key === ESCAPE_KEY) {
-        evt.preventDefault();
-        replacePopupToCard();
-        document.removeEventListener('keydown', onEscKeyDown);
-        siteBodyElement.classList.remove('hide-overflow');
-      }
-    };
-
-    movieCardComponent.setClickHandler(() => {
-      siteBodyElement.classList.add('hide-overflow');
-      replaceCardToPopup();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    movieCardComponent.setClickHandler(() => {
-      siteBodyElement.classList.add('hide-overflow');
-      replaceCardToPopup();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    movieCardComponent.setClickHandler(() => {
-      siteBodyElement.classList.add('hide-overflow');
-      replaceCardToPopup();
-      document.addEventListener('keydown', onEscKeyDown);
-    });
-
-    popupComponent.setClickHandler(() => {
-      siteBodyElement.classList.remove('hide-overflow');
-      replacePopupToCard();
-      document.removeEventListener('keydown', onEscKeyDown);
-    });
-
-    render(container, movieCardComponent, RenderPosition.BEFOREEND);
+    const moviePresenter = new MoviePresenter(container);
+    moviePresenter.init(movie);
   }
 
   _renderAllMovies(from, to) {

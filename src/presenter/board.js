@@ -18,12 +18,17 @@ const ESCAPE_KEY = 'Escape';
 export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
+    this._renderedMoviesCount = MOVIES_COUNT_PER_STEP;
+
     this._boardComponent = new MoviesBoardView();
     this._sortComponent = new SortListView(Sort);
     this._allMoviesComponent = new AllMoviesView();
     this._topMoviesComponent = new TopMoviesView();
     this._mostCommentedMoviesComponent = new MostCommentedMoviesView();
     this._noMoviesComponent = new NoMovieView();
+    this._showMoreButtonComponent = new ShowMoreButtonView();
+
+    this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
   }
 
   init(movies) {
@@ -116,24 +121,20 @@ export default class Board {
     render(this._boardComponent, this._noMoviesComponent, RenderPosition.AFTERBEGIN);
   }
 
+  _handleShowMoreButtonClick() {
+    this._renderAllMovies(this._renderedMoviesCount, this._renderedMoviesCount + MOVIES_COUNT_PER_STEP);
+
+    this._renderedMoviesCount += MOVIES_COUNT_PER_STEP;
+
+    if (this._renderedMoviesCount >= this._movies.length) {
+      remove(this._showMoreButtonComponent);
+    }
+  }
+
   _renderShowMoreButton() {
-    let renderedTaskCount = MOVIES_COUNT_PER_STEP;
-    const showMoreButtonComponent = new ShowMoreButtonView();
-    render(this._allMoviesComponent, showMoreButtonComponent, RenderPosition.BEFOREEND);
+    render(this._allMoviesComponent, this._showMoreButtonComponent, RenderPosition.BEFOREEND);
 
-    const showMoreHandler = () => {
-      this._movies
-        .slice(renderedTaskCount, renderedTaskCount + MOVIES_COUNT_PER_STEP)
-        .forEach((movie) => this._renderMovie(movie, this._allMoviesContainer));
-
-      renderedTaskCount += MOVIES_COUNT_PER_STEP;
-
-      if (renderedTaskCount >= this._movies.length) {
-        remove(showMoreButtonComponent);
-      }
-    };
-
-    showMoreButtonComponent.setClickHandler(showMoreHandler);
+    this._showMoreButtonComponent.setClickHandler(this._handleShowMoreButtonClick);
   }
 
   _renderMoviesList() {

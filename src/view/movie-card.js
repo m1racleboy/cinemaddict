@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
 
 const MAX_DESCRIPTION_LENGTH = 139;
-const CONTROL_ACTIVE = 'film-card__controls-item--active';
+const CONTROL_ACTIVE = ' film-card__controls-item--active';
 
 const createMovieCardTemplate = (movie = {}) => {
   const {
@@ -29,9 +29,9 @@ const createMovieCardTemplate = (movie = {}) => {
             <p class="film-card__description">${description.length > MAX_DESCRIPTION_LENGTH ? description.substr(0, MAX_DESCRIPTION_LENGTH) + '...' : description}</p>
             <a class="film-card__comments">${comments.length} comments</a>
             <div class="film-card__controls">
-              <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist ${isWatchList ? CONTROL_ACTIVE : ''}" type="button">Add to watchlist</button>
-              <button class="film-card__controls-item button film-card__controls-item--mark-as-watched ${isHistory ? CONTROL_ACTIVE : ''}" type="button">Mark as watched</button>
-              <button class="film-card__controls-item button film-card__controls-item--favorite ${isFavorite ? CONTROL_ACTIVE : ''}" type="button">Mark as favorite</button>
+              <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist${isWatchList ? CONTROL_ACTIVE : ''}" type="button">Add to watchlist</button>
+              <button class="film-card__controls-item button film-card__controls-item--mark-as-watched${isHistory ? CONTROL_ACTIVE : ''}" type="button">Mark as watched</button>
+              <button class="film-card__controls-item button film-card__controls-item--favorite${isFavorite ? CONTROL_ACTIVE : ''}" type="button">Mark as favorite</button>
             </div>
           </article>`;
 };

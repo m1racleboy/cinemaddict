@@ -1,3 +1,4 @@
+import { siteBodyElement } from '../main.js';
 import Abstract from '../view/abstract.js';
 
 export const RenderPosition = {
@@ -56,4 +57,12 @@ export const remove = (component) => {
 
   component.getElement().remove();
   component.removeElement();
+};
+
+export const openPopup = (popup) => {
+  if (popup instanceof Abstract) {
+    popup = popup.getElement();
+  }
+  siteBodyElement.classList.add('hide-overflow');
+  siteBodyElement.appendChild(popup);
 };

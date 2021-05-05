@@ -31,6 +31,13 @@ export default class Board {
 
     render(this._boardContainer, this._boardComponent, RenderPosition.BEFOREEND);
     render(this._boardComponent, this._allMoviesComponent, RenderPosition.BEFOREEND);
+    render(this._boardComponent, this._topMoviesComponent, RenderPosition.BEFOREEND);
+    render(this._boardComponent, this._mostCommentedMoviesComponent, RenderPosition.BEFOREEND);
+
+    this._allMoviesContainer = this._boardComponent.getElement().querySelector('.films-list__container');
+    this._topMoviesContainer = this._boardComponent.getElement().querySelector('.films-list__container--top');
+    this._mostCommentedMoviesContainer = this._boardComponent.getElement().querySelector('.films-list__container--most-commented');
+
 
     this._renderBoard();
   }
@@ -39,10 +46,10 @@ export default class Board {
     render(this._boardContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
   }
 
-  _renderMovie(movie) {
+  _renderMovie(movie, container) {
     const movieCardComponent = new MovieCardView(movie);
     const popupComponent = new PopupView(movie);
-    const moviesContainer = this._boardComponent.getElement().querySelector('.films-list__container');
+
     const replaceCardToPopup = () => {
       replace(popupComponent, movieCardComponent);
     };
@@ -84,21 +91,25 @@ export default class Board {
       document.removeEventListener('keydown', onEscKeyDown);
     });
 
-    render(moviesContainer, movieCardComponent, RenderPosition.BEFOREEND);
+    render(container, movieCardComponent, RenderPosition.BEFOREEND);
   }
 
-  _renderMovies(from, to) {
+  _renderAllMovies(from, to) {
     this._movies
       .slice(from, to)
-      .forEach((movie) => this._renderMovie(movie));
+      .forEach((movie) => this._renderMovie(movie, this._allMoviesContainer));
   }
 
-  _renderMoviesTop() {
-
+  _renderTopMovies(from, to) {
+    this._movies
+      .slice(from, to)
+      .forEach((movie) => this._renderMovie(movie, this._topMoviesContainer));
   }
 
-  _renderMoviesMostCommented() {
-
+  _renderMostCommentedMovies(from, to) {
+    this._movies
+      .slice(from, to)
+      .forEach((movie) => this._renderMovie(movie, this._mostCommentedMoviesContainer));
   }
 
   _renderNoMovies() {
@@ -113,7 +124,7 @@ export default class Board {
     const showMoreHandler = () => {
       this._movies
         .slice(renderedTaskCount, renderedTaskCount + MOVIES_COUNT_PER_STEP)
-        .forEach((movie) => this._renderMovie(movie));
+        .forEach((movie) => this._renderMovie(movie, this._allMoviesContainer));
 
       renderedTaskCount += MOVIES_COUNT_PER_STEP;
 
@@ -126,7 +137,9 @@ export default class Board {
   }
 
   _renderMoviesList() {
-    this._renderMovies(0, Math.min(this._movies.length, MOVIES_COUNT_PER_STEP));
+    this._renderAllMovies(0, Math.min(this._movies.length, MOVIES_COUNT_PER_STEP));
+    this._renderTopMovies(0, TOP_MOVIES_COUNT);
+    this._renderMostCommentedMovies(0, TOP_MOVIES_COUNT);
 
     if (this._movies.length > MOVIES_COUNT_PER_STEP) {
       this._renderShowMoreButton();

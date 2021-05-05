@@ -1,6 +1,8 @@
 import { getRandomArray, getRandomArrayElement, getRandomInteger } from '../utils/common.js';
 import dayjs from 'dayjs';
 import { getComment } from './comment.js';
+import { nanoid } from 'nanoid';
+
 const HIGH_RATING = 10;
 const COMMENT_COUNT = 10;
 const MAX_HOURS = 6;
@@ -84,18 +86,18 @@ const COUNTRIES = [
   'Germany',
 ];
 
-export const createMovieMock = (id) => {
+export const createMovieMock = () => {
   const title = getRandomArrayElement(TITLES);
   const ratingA = getRandomInteger(0, HIGH_RATING);
   const ratingB = +`${ratingA === 10 ? ratingA : ratingA + `.${getRandomInteger(0, 9)}`}`;
   const comments = [];
 
   for (let i = 0; i < getRandomInteger(0, COMMENT_COUNT); i++) {
-    comments[i] = getComment(i);
+    comments[i] = getComment();
   }
 
   return {
-    id: id,
+    id: nanoid(),
     movie_info: {
       title: title,
       rating: ratingB,

@@ -12,11 +12,11 @@ const siteMainElement = siteBodyElement.querySelector('.main');
 const siteHeaderElement = siteBodyElement.querySelector('.header');
 const siteFooterStatsElement = siteBodyElement.querySelector('.footer__statistics');
 
-const movies = new Array(MOVIES_COUNT).fill().map((arr, i) => createMovieMock(i));
+const movies = new Array(MOVIES_COUNT).fill().map(() => createMovieMock());
 const filters = createFilter(movies);
 
 render(siteHeaderElement, new UserRankView(movies), RenderPosition.BEFOREEND);
-render(siteMainElement, new FilterListView(filters), RenderPosition.BEFOREEND);
 const boardPresenter = new BoardPresenter(siteMainElement);
 boardPresenter.init(movies);
+render(siteMainElement, new FilterListView(filters), RenderPosition.AFTERBEGIN);
 render(siteFooterStatsElement, new FooterStatsView(movies.length), RenderPosition.BEFOREEND);

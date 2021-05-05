@@ -7,6 +7,7 @@ import NoMovieView from '../view/no-movies.js';
 import ShowMoreButtonView from '../view/show-more-button.js';
 import { Sort } from '../const.js';
 import { render, RenderPosition, remove } from '../utils/render.js';
+import { updateItem } from '../utils/common.js';
 import MoviePresenter from './movie.js';
 
 const MOVIES_COUNT_PER_STEP = 5;
@@ -16,6 +17,7 @@ export default class Board {
   constructor(boardContainer) {
     this._boardContainer = boardContainer;
     this._renderedMoviesCount = MOVIES_COUNT_PER_STEP;
+    this._moviePresenter = {};
 
     this._boardComponent = new MoviesBoardView();
     this._sortComponent = new SortListView(Sort);
@@ -25,6 +27,7 @@ export default class Board {
     this._noMoviesComponent = new NoMovieView();
     this._showMoreButtonComponent = new ShowMoreButtonView();
 
+    this._handleMovieChange = this._handleMovieChange.bind(this);
     this._handleShowMoreButtonClick = this._handleShowMoreButtonClick.bind(this);
   }
 
@@ -44,13 +47,19 @@ export default class Board {
     this._renderBoard();
   }
 
+  _handleMovieChange(updatedMovie) {
+    this._movies = updateItem(this._movies, updatedMovie);
+    this._moviePresenter[updatedMovie.id].init(updatedMovie);
+  }
+
   _renderSort() {
     render(this._boardContainer, this._sortComponent, RenderPosition.AFTERBEGIN);
   }
 
   _renderMovie(movie, container) {
-    const moviePresenter = new MoviePresenter(container);
+    const moviePresenter = new MoviePresenter(container, this._handleMovieChange);
     moviePresenter.init(movie);
+    this._moviePresenter[movie.id] = moviePresenter;
   }
 
   _renderAllMovies(from, to) {
@@ -69,6 +78,15 @@ export default class Board {
     this._movies
       .slice(from, to)
       .forEach((movie) => this._renderMovie(movie, this._mostCommentedMoviesContainer));
+  }
+
+  _clearMoviesList() {
+    Object
+      .values(this._moviePresenter)
+      .forEach((presenter) => presenter.destroy());
+    this._moviePresenter = {};
+    this._renderedMoviesCount = MOVIES_COUNT_PER_STEP;
+    remove(this._showMoreButtonComponent);
   }
 
   _renderNoMovies() {

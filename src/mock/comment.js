@@ -1,6 +1,8 @@
 import { EMOJIS } from '../const.js';
 import { getRandomArrayElement } from '../utils/common.js';
 import dayjs from 'dayjs';
+import { nanoid } from 'nanoid';
+
 const AUTHORS = [
   'Никита',
   'Тёмыч',
@@ -18,9 +20,9 @@ const COMMENTS = [
   '1000-7',
 ];
 
-export const getComment = (id) => {
+export const getComment = () => {
   return {
-    id: id,
+    id: nanoid(),
     author: getRandomArrayElement(AUTHORS),
     comment: getRandomArrayElement(COMMENTS),
     date: dayjs().toDate(),

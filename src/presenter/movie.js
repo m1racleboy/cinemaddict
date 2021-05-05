@@ -6,8 +6,9 @@ import { render, RenderPosition, replace, remove } from '../utils/render.js';
 const ESCAPE_KEY = 'Escape';
 
 export default class Movie {
-  constructor(container) {
+  constructor(container, changeData) {
     this._container = container;
+    this._changeData = changeData;
 
     this._movieCardComponent = null;
     this._popupComponent = null;

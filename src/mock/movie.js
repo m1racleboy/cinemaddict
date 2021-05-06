@@ -96,6 +96,11 @@ export const createMovieMock = () => {
     comments[i] = getComment();
   }
 
+  const date = dayjs().add(getRandomInteger(0, -200), 'year')
+    .add(getRandomInteger(1, 12), 'month')
+    .add(getRandomInteger(1, 31), 'day')
+    .toDate();
+
   return {
     id: nanoid(),
     movie_info: {
@@ -111,7 +116,7 @@ export const createMovieMock = () => {
       description: getRandomArrayElement(DESCRIPTIONS),
     },
     release: {
-      date: dayjs().toDate(),
+      date: date,
       release_country: getRandomArrayElement(COUNTRIES),
     },
     comments: comments,

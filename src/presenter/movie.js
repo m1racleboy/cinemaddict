@@ -18,7 +18,7 @@ export default class Movie {
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
 
     this._handleWatchListClick = this._handleWatchListClick.bind(this);
-    this._handleWatchedClick = this._handleWatchedClick.bind(this);
+    this._handleHistoryClick = this._handleHistoryClick.bind(this);
     this._handleFavoritesClick = this._handleFavoritesClick.bind(this);
   }
 
@@ -32,12 +32,12 @@ export default class Movie {
 
     this._movieCardComponent.setOpenPopupHandler(this._handleOpenPopupClick);
     this._movieCardComponent.setWatchListClickHandler(this._handleWatchListClick);
-    this._movieCardComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this._movieCardComponent.setHistoryClickHandler(this._handleHistoryClick);
     this._movieCardComponent.setFavoritesClickHandler(this._handleFavoritesClick);
 
     this._popupComponent.setClosePopupHandler(this._handleClosePopupClick);
     this._popupComponent.setWatchListClickHandler(this._handleWatchListClick);
-    this._popupComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this._popupComponent.setHistoryClickHandler(this._handleHistoryClick);
     this._popupComponent.setFavoritesClickHandler(this._handleFavoritesClick);
 
     if (prevMovieCardComponent === null || prevPopupComponent === null) {
@@ -103,7 +103,7 @@ export default class Movie {
     });
   }
 
-  _handleWatchedClick() {
+  _handleHistoryClick() {
     this._changeData({
       ...this._movie,
       user_details: {

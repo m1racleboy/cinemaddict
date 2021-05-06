@@ -170,7 +170,7 @@ export default class Popup extends AbstractView {
     this._element = null;
     this._closePopupHandler = this._closePopupHandler.bind(this);
     this._watchListClickHandler = this._watchListClickHandler.bind(this);
-    this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    this._historyClickHandler = this._historyClickHandler.bind(this);
     this._favoritesClickHandler = this._favoritesClickHandler.bind(this);
   }
 
@@ -194,7 +194,7 @@ export default class Popup extends AbstractView {
     this._callback.watchListClick();
   }
 
-  _watchedClickHandler() {
+  _historyClickHandler() {
     this._callback.watchedClick();
   }
 
@@ -209,11 +209,11 @@ export default class Popup extends AbstractView {
       .addEventListener('click', this._watchListClickHandler);
   }
 
-  setWatchedClickHandler(callback) {
+  setHistoryClickHandler(callback) {
     this._callback.watchedClick = callback;
     this.getElement()
       .querySelector('#watched')
-      .addEventListener('click', this._watchedClickHandler);
+      .addEventListener('click', this._historyClickHandler);
   }
 
   setFavoritesClickHandler(callback) {

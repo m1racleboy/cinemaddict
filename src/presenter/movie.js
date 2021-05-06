@@ -16,9 +16,14 @@ export default class Movie {
     this._handleOpenPopupClick = this._handleOpenPopupClick.bind(this);
     this._handleClosePopupClick = this._handleClosePopupClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
+
+    this._handleWatchListClick = this._handleWatchListClick.bind(this);
+    this._handleWatchedClick = this._handleWatchedClick.bind(this);
+    this._handleFavoritesClick = this._handleFavoritesClick.bind(this);
   }
 
   init(movie) {
+    this._movie = movie;
     const prevMovieCardComponent = this._movieCardComponent;
     const prevPopupComponent = this._popupComponent;
 
@@ -26,7 +31,14 @@ export default class Movie {
     this._popupComponent = new PopupView(movie);
 
     this._movieCardComponent.setOpenPopupHandler(this._handleOpenPopupClick);
+    this._movieCardComponent.setWatchListClickHandler(this._handleWatchListClick);
+    this._movieCardComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this._movieCardComponent.setFavoritesClickHandler(this._handleFavoritesClick);
+
     this._popupComponent.setClosePopupHandler(this._handleClosePopupClick);
+    this._popupComponent.setWatchListClickHandler(this._handleWatchListClick);
+    this._popupComponent.setWatchedClickHandler(this._handleWatchedClick);
+    this._popupComponent.setFavoritesClickHandler(this._handleFavoritesClick);
 
     if (prevMovieCardComponent === null || prevPopupComponent === null) {
       render(this._container, this._movieCardComponent, RenderPosition.BEFOREEND);
@@ -53,6 +65,7 @@ export default class Movie {
   _replaceCardToPopup() {
     openPopup(this._popupComponent);
     document.addEventListener('keydown', this._escKeyDownHandler);
+    siteBodyElement.classList.add('hide-overflow');
   }
 
   _replacePopupToCard() {
@@ -78,5 +91,35 @@ export default class Movie {
 
   _handleClosePopupClick() {
     this._replacePopupToCard();
+  }
+
+  _handleWatchListClick() {
+    this._changeData({
+      ...this._movie,
+      user_details: {
+        ...this._movie.user_details,
+        isWatchList: !this._movie.user_details.isWatchList,
+      },
+    });
+  }
+
+  _handleWatchedClick() {
+    this._changeData({
+      ...this._movie,
+      user_details: {
+        ...this._movie.user_details,
+        isHistory: !this._movie.user_details.isHistory,
+      },
+    });
+  }
+
+  _handleFavoritesClick() {
+    this._changeData({
+      ...this._movie,
+      user_details: {
+        ...this._movie.user_details,
+        isFavorite: !this._movie.user_details.isFavorite,
+      },
+    });
   }
 }

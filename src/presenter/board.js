@@ -43,7 +43,6 @@ export default class Board {
     this._topMoviesContainer = this._boardComponent.getElement().querySelector('.films-list__container--top');
     this._mostCommentedMoviesContainer = this._boardComponent.getElement().querySelector('.films-list__container--most-commented');
 
-
     this._renderBoard();
   }
 

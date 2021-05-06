@@ -63,6 +63,5 @@ export const openPopup = (popup) => {
   if (popup instanceof Abstract) {
     popup = popup.getElement();
   }
-  siteBodyElement.classList.add('hide-overflow');
   siteBodyElement.appendChild(popup);
 };

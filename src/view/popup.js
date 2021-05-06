@@ -169,6 +169,9 @@ export default class Popup extends AbstractView {
     this._movie = movie;
     this._element = null;
     this._closePopupHandler = this._closePopupHandler.bind(this);
+    this._watchListClickHandler = this._watchListClickHandler.bind(this);
+    this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    this._favoritesClickHandler = this._favoritesClickHandler.bind(this);
   }
 
   getTemplate() {
@@ -185,5 +188,38 @@ export default class Popup extends AbstractView {
     this.getElement()
       .querySelector('.film-details__close-btn')
       .addEventListener('click', this._closePopupHandler);
+  }
+
+  _watchListClickHandler() {
+    this._callback.watchListClick();
+  }
+
+  _watchedClickHandler() {
+    this._callback.watchedClick();
+  }
+
+  _favoritesClickHandler() {
+    this._callback.favoritesClick();
+  }
+
+  setWatchListClickHandler(callback) {
+    this._callback.watchListClick = callback;
+    this.getElement()
+      .querySelector('#watchlist')
+      .addEventListener('click', this._watchListClickHandler);
+  }
+
+  setWatchedClickHandler(callback) {
+    this._callback.watchedClick = callback;
+    this.getElement()
+      .querySelector('#watched')
+      .addEventListener('click', this._watchedClickHandler);
+  }
+
+  setFavoritesClickHandler(callback) {
+    this._callback.favoritesClick = callback;
+    this.getElement()
+      .querySelector('#favorite')
+      .addEventListener('click', this._favoritesClickHandler);
   }
 }

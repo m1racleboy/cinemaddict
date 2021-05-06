@@ -41,14 +41,17 @@ export default class MovieCard extends AbstractView {
     super();
     this._movie = movie;
     this._element = null;
-    this.openPopupHandler = this.openPopupHandler.bind(this);
+    this._openPopupHandler = this._openPopupHandler.bind(this);
+    this._watchListClickHandler = this._watchListClickHandler.bind(this);
+    this._watchedClickHandler = this._watchedClickHandler.bind(this);
+    this._favoritesClickHandler = this._favoritesClickHandler.bind(this);
   }
 
   getTemplate() {
     return createMovieCardTemplate(this._movie);
   }
 
-  openPopupHandler(evt) {
+  _openPopupHandler(evt) {
     evt.preventDefault();
     this._callback.click();
   }
@@ -57,12 +60,39 @@ export default class MovieCard extends AbstractView {
     this._callback.click = callback;
     this.getElement()
       .querySelector('.film-card__poster')
-      .addEventListener('click', this.openPopupHandler);
+      .addEventListener('click', this._openPopupHandler);
     this.getElement()
       .querySelector('.film-card__title')
-      .addEventListener('click', this.openPopupHandler);
+      .addEventListener('click', this._openPopupHandler);
     this.getElement()
       .querySelector('.film-card__comments')
-      .addEventListener('click', this.openPopupHandler);
+      .addEventListener('click', this._openPopupHandler);
+  }
+
+  _watchListClickHandler() {
+    this._callback.watchListClick();
+  }
+
+  _watchedClickHandler() {
+    this._callback.watchedClick();
+  }
+
+  _favoritesClickHandler() {
+    this._callback.favoritesClick();
+  }
+
+  setWatchListClickHandler(callback) {
+    this._callback.watchListClick = callback;
+    this.getElement().querySelector('.film-card__controls-item--add-to-watchlist').addEventListener('click', this._watchListClickHandler);
+  }
+
+  setWatchedClickHandler(callback) {
+    this._callback.watchedClick = callback;
+    this.getElement().querySelector('.film-card__controls-item--mark-as-watched').addEventListener('click', this._watchedClickHandler);
+  }
+
+  setFavoritesClickHandler(callback) {
+    this._callback.favoritesClick = callback;
+    this.getElement().querySelector('.film-card__controls-item--favorite').addEventListener('click', this._favoritesClickHandler);
   }
 }

@@ -5,13 +5,20 @@ import { render, RenderPosition, replace, remove, openPopup } from '../utils/ren
 
 const ESCAPE_KEY = 'Escape';
 
+const Mode = {
+  DEFAULT: 'DEFAULT',
+  POPUP: 'POPUP',
+};
+
 export default class Movie {
-  constructor(container, changeData) {
+  constructor(container, changeData, changeMode) {
     this._container = container;
     this._changeData = changeData;
+    this._changeMode = changeMode;
 
     this._movieCardComponent = null;
     this._popupComponent = null;
+    this._mode = Mode.DEFAULT;
 
     this._handleOpenPopupClick = this._handleOpenPopupClick.bind(this);
     this._handleClosePopupClick = this._handleClosePopupClick.bind(this);
@@ -24,23 +31,16 @@ export default class Movie {
 
   init(movie) {
     this._movie = movie;
-    const prevMovieCardComponent = this._movieCardComponent;
-    const prevPopupComponent = this._popupComponent;
 
+    const prevMovieCardComponent = this._movieCardComponent;
     this._movieCardComponent = new MovieCardView(movie);
-    this._popupComponent = new PopupView(movie);
 
     this._movieCardComponent.setOpenPopupHandler(this._handleOpenPopupClick);
     this._movieCardComponent.setWatchListClickHandler(this._handleWatchListClick);
     this._movieCardComponent.setHistoryClickHandler(this._handleHistoryClick);
     this._movieCardComponent.setFavoritesClickHandler(this._handleFavoritesClick);
 
-    this._popupComponent.setClosePopupHandler(this._handleClosePopupClick);
-    this._popupComponent.setWatchListClickHandler(this._handleWatchListClick);
-    this._popupComponent.setHistoryClickHandler(this._handleHistoryClick);
-    this._popupComponent.setFavoritesClickHandler(this._handleFavoritesClick);
-
-    if (prevMovieCardComponent === null || prevPopupComponent === null) {
+    if (prevMovieCardComponent === null) {
       render(this._container, this._movieCardComponent, RenderPosition.BEFOREEND);
       return;
     }
@@ -49,48 +49,68 @@ export default class Movie {
       replace(this._movieCardComponent, prevMovieCardComponent);
     }
 
-    if (siteBodyElement.contains(prevPopupComponent.getElement())) {
-      replace(this._popupComponent, prevPopupComponent);
-    }
-
     remove(prevMovieCardComponent);
-    remove(prevPopupComponent);
+  }
+
+  resetView() {
+    if (this._mode !== Mode.DEFAULT) {
+      this._closePopup();
+    }
   }
 
   destroy() {
     remove(this._movieCardComponent);
-    remove(this._popupComponent);
   }
 
-  _replaceCardToPopup() {
-    openPopup(this._popupComponent);
-    document.addEventListener('keydown', this._escKeyDownHandler);
-    siteBodyElement.classList.add('hide-overflow');
+  _openPopup() {
+    this._changeMode();
+    this._mode = Mode.POPUP;
+
+    const prevPopupComponent = this._popupComponent;
+    this._popupComponent = new PopupView(this._movie);
+
+    this._popupComponent.setClosePopupHandler(this._handleClosePopupClick);
+    this._popupComponent.setWatchListClickHandler(this._handleWatchListClick);
+    this._popupComponent.setHistoryClickHandler(this._handleHistoryClick);
+    this._popupComponent.setFavoritesClickHandler(this._handleFavoritesClick);
+
+    if (prevPopupComponent === null) {
+      openPopup(this._popupComponent);
+      siteBodyElement.classList.add('hide-overflow');
+      document.addEventListener('keydown', this._escKeyDownHandler);
+      return;
+    }
+
+    if (this._mode === Mode.POPUP) {
+      replace(this._popupComponent, prevPopupComponent);
+      siteBodyElement.classList.add('hide-overflow');
+      document.addEventListener('keydown', this._escKeyDownHandler);
+    }
+
+    remove(prevPopupComponent);
   }
 
-  _replacePopupToCard() {
+  _closePopup() {
     this._popupComponent.getElement().remove();
-    document.removeEventListener('keydown', this._escKeyDownHandler);
+    this._popupComponent = null;
+    this._mode = Mode.DEFAULT;
     siteBodyElement.classList.remove('hide-overflow');
+    document.removeEventListener('keydown', this._escKeyDownHandler);
   }
 
   _escKeyDownHandler(evt) {
     if (evt.key === ESCAPE_KEY) {
       evt.preventDefault();
-      this._replacePopupToCard();
+      this._closePopup();
     }
   }
 
   _handleOpenPopupClick() {
-    const popup = siteBodyElement.querySelector('.film-details');
-    if (siteBodyElement.contains(popup)) {
-      popup.remove();
-    }
-    this._replaceCardToPopup();
+    this._openPopup();
   }
 
   _handleClosePopupClick() {
-    this._replacePopupToCard();
+    this._closePopup();
   }
 
   _handleWatchListClick() {

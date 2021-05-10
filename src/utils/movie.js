@@ -14,3 +14,7 @@ export const sortMoviesByRating = (a, b) => {
 export const sortMoviesByDate = (a, b) => {
   return dayjs(b.release.date).diff(dayjs(a.release.date));
 };
+
+export const getDuration = (number) => {
+  return number > 59 ? `${Math.floor(number / 60)}h ${number % 60}m` : `${number % 60}m`;
+};

@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
 import { EMOJIS } from '../const.js';
+import { getDuration } from '../utils/movie.js';
 
 const createEmojiTemplate = (emoji) => {
   return `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}'>
@@ -28,7 +29,7 @@ const createCommentTemplate = (comments) => {
         <p class='film-details__comment-text'>${comment}</p>
         <p class='film-details__comment-info'>
           <span class='film-details__comment-author'>${author}</span>
-          <span class='film-details__comment-day'>${dayjs(date).format('DD MM YY')}</span>
+          <span class='film-details__comment-day'>${dayjs(date).format('DD/MM/YYYY/HH:MM')}</span>
           <button class='film-details__comment-delete'>Delete</button>
         </p>
       </div>
@@ -123,7 +124,7 @@ const createPopupTemplate = (movie) => {
                       </tr>
                       <tr class='film-details__row'>
                         <td class='film-details__term'>Runtime</td>
-                        <td class='film-details__cell'>${duration}</td>
+                        <td class='film-details__cell'>${getDuration(duration)}</td>
                       </tr>
                       <tr class='film-details__row'>
                         <td class='film-details__term'>Country</td>

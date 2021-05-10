@@ -5,8 +5,6 @@ import { nanoid } from 'nanoid';
 
 const HIGH_RATING = 10;
 const COMMENT_COUNT = 10;
-const MAX_HOURS = 6;
-const MAX_MINUTES = 59;
 const DESCRIPTIONS = [
   'Похождения Шерлока Холмса и его друга Джона.',
   'Школьнику на лицо упала тетрадь и он начал убивать людей, так он думал, но он находился в шизофренической лечебнице.',
@@ -111,7 +109,7 @@ export const createMovieMock = () => {
       director: getRandomArrayElement(DIRECTORS),
       writers: getRandomArray(WRITERS, getRandomInteger(1, 4)).join(', '),
       actors: getRandomArray(ACTORS, getRandomInteger(1, 6)).join(', '),
-      duration: `${getRandomInteger(0, MAX_HOURS)}h ${getRandomInteger(0, MAX_MINUTES)}m`,
+      duration: getRandomInteger(10, 241),
       genre: getRandomArray(GENRES, getRandomInteger(1, 6)).join(', '),
       description: getRandomArrayElement(DESCRIPTIONS),
     },

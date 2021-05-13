@@ -21,7 +21,7 @@ const COMMENTS = [
 ];
 
 export const getComment = () => {
-  const date = dayjs().add(getRandomInteger(0, -200), 'year')
+  const date = dayjs().add(getRandomInteger(-2, -1), 'year')
     .add(getRandomInteger(1, 12), 'month')
     .add(getRandomInteger(1, 31), 'day')
     .toDate();

@@ -27,6 +27,7 @@ export default class Movie {
     this._handleWatchListClick = this._handleWatchListClick.bind(this);
     this._handleHistoryClick = this._handleHistoryClick.bind(this);
     this._handleFavoritesClick = this._handleFavoritesClick.bind(this);
+    this._handleAddComment = this._handleAddComment.bind(this);
   }
 
   init(movie) {
@@ -73,6 +74,7 @@ export default class Movie {
     this._popupComponent.setWatchListClickHandler(this._handleWatchListClick);
     this._popupComponent.setHistoryClickHandler(this._handleHistoryClick);
     this._popupComponent.setFavoritesClickHandler(this._handleFavoritesClick);
+    this._popupComponent.setAddCommentHandler(this._handleAddComment);
 
     if (prevPopupComponent === null) {
       openPopup(this._popupComponent);
@@ -91,6 +93,7 @@ export default class Movie {
   }
 
   _closePopup() {
+    this._popupComponent.reset(this._movie);
     this._popupComponent.getElement().remove();
     this._popupComponent = null;
     this._mode = Mode.DEFAULT;
@@ -142,4 +145,13 @@ export default class Movie {
       },
     });
   }
+
+  _handleAddComment(data) {
+    const comments = [...data.comments];
+    this._changeData({
+      ...this._movie,
+      comments: comments,
+    });
+  }
 }
+

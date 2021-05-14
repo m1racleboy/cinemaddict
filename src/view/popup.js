@@ -18,13 +18,6 @@ const addNewComment = () => {
   return comment;
 };
 
-const createEmojiTemplate = (emoji) => {
-  return `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}'>
-          <label class='film-details__emoji-label' for='emoji-${emoji}' data-emoji='${emoji}'>
-            <img src='./images/emoji/${emoji}.png' width='30' height='30' alt='emoji'>
-          </label>`;
-};
-
 const getChecked = (check) => check ? 'checked' : '';
 
 const createControlTemplate = (control) => {
@@ -51,7 +44,7 @@ const createCommentTemplate = (comments) => {
         <p class='film-details__comment-text'>${comment}</p>
         <p class='film-details__comment-info'>
           <span class='film-details__comment-author'>${author}</span>
-          <span class='film-details__comment-day'>${dayjs(date).format('DD/MM/YYYY/HH:mm')}</span>
+          <span class='film-details__comment-day'>${dayjs(date).format('YYYY/MM/DD/HH:mm')}</span>
           <button type='button' class='film-details__comment-delete'>Delete</button>
         </p>
       </div>
@@ -74,12 +67,9 @@ const createPopupTemplate = (movie) => {
     currentCommentEmoji,
     currentCommentText,
   } = movie;
+
   const commentsCount = comments.length;
   const commentsTemplate = createCommentTemplate(comments);
-
-  const emojiItemsTemplate = EMOJIS
-    .map((emoji) => createEmojiTemplate(emoji))
-    .join('');
 
   const Controls = [
     {
@@ -154,7 +144,7 @@ const createPopupTemplate = (movie) => {
                         <td class='film-details__cell'>${release_country}</td>
                       </tr>
                       <tr class='film-details__row'>
-                        <td class='film-details__term'>Genre${genre.length > 1 ? 's' : ''}</td>
+                        <td class='film-details__term'>${genre.length === 1 ? 'Genre' : 'Genres'}</td>
                         <td class='film-details__cell'>
                           <span class='film-details__genre'>${genre}</span>
                       </tr>
@@ -177,10 +167,14 @@ const createPopupTemplate = (movie) => {
                       ${currentCommentEmoji ? `<img src="images/emoji/${currentCommentEmoji}.png" width="55" height="55" alt="emoji-smile">` : ''}
                     </div>
                     <label class='film-details__comment-label'>
-                      <textarea class='film-details__comment-input' placeholder='Select reaction below and write comment here' name='comment'>${!currentCommentText ? '' : currentCommentText}</textarea>
+                      <textarea class='film-details__comment-input' placeholder='Select reaction below and write comment here' name='comment'>${currentCommentText ? currentCommentText : ''}</textarea>
                     </label>
                     <div class='film-details__emoji-list'>
-                      ${emojiItemsTemplate}
+                      ${EMOJIS.map((emoji) =>
+    `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}' ${emoji === currentCommentEmoji ? 'checked' : ''}>
+                      <label class='film-details__emoji-label' for='emoji-${emoji}'>
+                        <img src='./images/emoji/${emoji}.png' width='30' height='30' alt='emoji'>
+                      </label>`).join('')}
                     </div>
                   </div>
                 </section>
@@ -227,9 +221,14 @@ export default class Popup extends SmartView {
   }
 
   _setInnerHandlers() {
-    this.getElement().querySelector('.film-details__emoji-list').addEventListener('change', this._changeEmojiHandler);
-    this.getElement().querySelector('.film-details__comment-input').addEventListener('input', this._inputCommentTextHandler);
-    this.getElement().addEventListener('keydown', this._sendCommentHandler);
+    this.getElement()
+      .querySelector('.film-details__emoji-list')
+      .addEventListener('change', this._changeEmojiHandler);
+    this.getElement()
+      .querySelector('.film-details__comment-input')
+      .addEventListener('input', this._inputCommentTextHandler);
+    this.getElement()
+      .addEventListener('keydown', this._sendCommentHandler);
   }
 
   _sendCommentHandler(evt) {

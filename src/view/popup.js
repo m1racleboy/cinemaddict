@@ -44,12 +44,19 @@ const createCommentTemplate = (comments) => {
         <p class='film-details__comment-text'>${comment}</p>
         <p class='film-details__comment-info'>
           <span class='film-details__comment-author'>${author}</span>
-          <span class='film-details__comment-day'>${dayjs(date).format('YYYY/MM/DD/HH:mm')}</span>
+          <span class='film-details__comment-day'>${dayjs(date).format('YYYY/MM/DD HH:mm')}</span>
           <button type='button' class='film-details__comment-delete'>Delete</button>
         </p>
       </div>
      </li>
   `).join('');
+};
+
+const createNewCommentTemplate = (emojis, currentEmoji) => {
+  return emojis.map((emoji) => `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}' ${emoji === currentEmoji ? 'checked' : ''}>
+                      <label class='film-details__emoji-label' for='emoji-${emoji}'>
+                        <img src='./images/emoji/${emoji}.png' width='30' height='30' alt='emoji'>
+                      </label>`).join('');
 };
 
 const createPopupTemplate = (movie) => {
@@ -170,10 +177,7 @@ const createPopupTemplate = (movie) => {
                       <textarea class='film-details__comment-input' placeholder='Select reaction below and write comment here' name='comment'>${currentCommentText ? currentCommentText : ''}</textarea>
                     </label>
                     <div class='film-details__emoji-list'>
-                      ${EMOJIS.map((emoji) => `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}' ${emoji === currentCommentEmoji ? 'checked' : ''}>
-                      <label class='film-details__emoji-label' for='emoji-${emoji}'>
-                        <img src='./images/emoji/${emoji}.png' width='30' height='30' alt='emoji'>
-                      </label>`).join('')}
+                      ${createNewCommentTemplate(EMOJIS, currentCommentEmoji)}
                     </div>
                   </div>
                 </section>

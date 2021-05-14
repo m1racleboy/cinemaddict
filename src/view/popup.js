@@ -170,8 +170,7 @@ const createPopupTemplate = (movie) => {
                       <textarea class='film-details__comment-input' placeholder='Select reaction below and write comment here' name='comment'>${currentCommentText ? currentCommentText : ''}</textarea>
                     </label>
                     <div class='film-details__emoji-list'>
-                      ${EMOJIS.map((emoji) =>
-    `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}' ${emoji === currentCommentEmoji ? 'checked' : ''}>
+                      ${EMOJIS.map((emoji) => `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}' ${emoji === currentCommentEmoji ? 'checked' : ''}>
                       <label class='film-details__emoji-label' for='emoji-${emoji}'>
                         <img src='./images/emoji/${emoji}.png' width='30' height='30' alt='emoji'>
                       </label>`).join('')}

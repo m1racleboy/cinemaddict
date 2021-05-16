@@ -1,12 +1,21 @@
 import dayjs from 'dayjs';
-import AbstractView from './abstract.js';
+import SmartView from './smart.js';
 import { EMOJIS } from '../const.js';
+import { getDuration } from '../utils/movie.js';
+import { nanoid } from 'nanoid';
 
-const createEmojiTemplate = (emoji) => {
-  return `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}'>
-          <label class='film-details__emoji-label' for='emoji-${emoji}'>
-            <img src='./images/emoji/${emoji}.png' width='30' height='30' alt='emoji'>
-          </label>`;
+const ENTER_KEY = 13;
+
+const addNewComment = () => {
+  const comment = {
+    id: nanoid(),
+    author: 'Me',
+    comment: '',
+    date: dayjs(),
+    emotion: null,
+  };
+
+  return comment;
 };
 
 const getChecked = (check) => check ? 'checked' : '';
@@ -19,6 +28,13 @@ const createControlTemplate = (control) => {
 };
 
 const createCommentTemplate = (comments) => {
+  comments.sort((a, b) => {
+    const date1 = dayjs(a.date);
+    const date2 = dayjs(b.date);
+
+    return date1.diff(date2);
+  });
+
   return Object.values(comments).map(({ author, comment, date, emotion }) =>
     `<li class='film-details__comment'>
       <span class='film-details__comment-emoji'>
@@ -28,12 +44,19 @@ const createCommentTemplate = (comments) => {
         <p class='film-details__comment-text'>${comment}</p>
         <p class='film-details__comment-info'>
           <span class='film-details__comment-author'>${author}</span>
-          <span class='film-details__comment-day'>${dayjs(date).format('DD MM YY')}</span>
-          <button class='film-details__comment-delete'>Delete</button>
+          <span class='film-details__comment-day'>${dayjs(date).format('YYYY/MM/DD HH:mm')}</span>
+          <button type='button' class='film-details__comment-delete'>Delete</button>
         </p>
       </div>
      </li>
   `).join('');
+};
+
+const createEmojiListTemplate = (currentEmoji) => {
+  return EMOJIS.map((emoji) => `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}' ${emoji === currentEmoji ? 'checked' : ''}>
+                      <label class='film-details__emoji-label' for='emoji-${emoji}'>
+                        <img src='./images/emoji/${emoji}.png' width='30' height='30' alt='emoji'>
+                      </label>`).join('');
 };
 
 const createPopupTemplate = (movie) => {
@@ -48,14 +71,12 @@ const createPopupTemplate = (movie) => {
       isWatchList, isHistory, isFavorite,
     },
     comments,
+    currentCommentEmoji,
+    currentCommentText,
   } = movie;
 
   const commentsCount = comments.length;
   const commentsTemplate = createCommentTemplate(comments);
-
-  const emojiItemsTemplate = EMOJIS
-    .map((emoji) => createEmojiTemplate(emoji))
-    .join('');
 
   const Controls = [
     {
@@ -123,14 +144,14 @@ const createPopupTemplate = (movie) => {
                       </tr>
                       <tr class='film-details__row'>
                         <td class='film-details__term'>Runtime</td>
-                        <td class='film-details__cell'>${duration}</td>
+                        <td class='film-details__cell'>${getDuration(duration)}</td>
                       </tr>
                       <tr class='film-details__row'>
                         <td class='film-details__term'>Country</td>
                         <td class='film-details__cell'>${release_country}</td>
                       </tr>
                       <tr class='film-details__row'>
-                        <td class='film-details__term'>Genre${genre.length > 1 ? 's' : ''}</td>
+                        <td class='film-details__term'>${genre.length === 1 ? 'Genre' : 'Genres'}</td>
                         <td class='film-details__cell'>
                           <span class='film-details__genre'>${genre}</span>
                       </tr>
@@ -149,12 +170,14 @@ const createPopupTemplate = (movie) => {
                     ${commentsTemplate}
                   </ul>
                   <div class='film-details__new-comment'>
-                    <div class='film-details__add-emoji-label'></div>
+                    <div class='film-details__add-emoji-label'>
+                      ${currentCommentEmoji ? `<img src="images/emoji/${currentCommentEmoji}.png" width="55" height="55" alt="emoji-smile">` : ''}
+                    </div>
                     <label class='film-details__comment-label'>
-                      <textarea class='film-details__comment-input' placeholder='Select reaction below and write comment here' name='comment'></textarea>
+                      <textarea class='film-details__comment-input' placeholder='Select reaction below and write comment here' name='comment'>${currentCommentText ? currentCommentText : ''}</textarea>
                     </label>
                     <div class='film-details__emoji-list'>
-                      ${emojiItemsTemplate}
+                      ${createEmojiListTemplate(currentCommentEmoji)}
                     </div>
                   </div>
                 </section>
@@ -163,19 +186,73 @@ const createPopupTemplate = (movie) => {
           </section>`;
 };
 
-export default class Popup extends AbstractView {
+export default class Popup extends SmartView {
   constructor(movie) {
     super();
-    this._movie = movie;
+
+    this._data = Popup.parseDataToState(movie);
     this._element = null;
+
     this._closePopupHandler = this._closePopupHandler.bind(this);
     this._watchListClickHandler = this._watchListClickHandler.bind(this);
     this._historyClickHandler = this._historyClickHandler.bind(this);
     this._favoritesClickHandler = this._favoritesClickHandler.bind(this);
+    this._changeEmojiHandler = this._changeEmojiHandler.bind(this);
+    this._inputCommentTextHandler = this._inputCommentTextHandler.bind(this);
+    this._sendCommentHandler = this._sendCommentHandler.bind(this);
+
+    this._setInnerHandlers();
   }
 
   getTemplate() {
-    return createPopupTemplate(this._movie);
+    return createPopupTemplate(this._data);
+  }
+
+  reset(movie) {
+    this.updateData(
+      Popup.parseDataToState(movie),
+    );
+  }
+
+  restoreHandlers() {
+    this._setInnerHandlers();
+
+    this.setClosePopupHandler(this._callback.click);
+    this.setWatchListClickHandler(this._callback.watchListClick);
+    this.setHistoryClickHandler(this._callback.watchedClick);
+    this.setFavoritesClickHandler(this._callback.favoritesClick);
+  }
+
+  _setInnerHandlers() {
+    this.getElement()
+      .querySelector('.film-details__emoji-list')
+      .addEventListener('change', this._changeEmojiHandler);
+    this.getElement()
+      .querySelector('.film-details__comment-input')
+      .addEventListener('input', this._inputCommentTextHandler);
+    this.getElement()
+      .addEventListener('keydown', this._sendCommentHandler);
+  }
+
+  _sendCommentHandler(evt) {
+    if ((evt.ctrlKey || evt.metaKey) && evt.keyCode === ENTER_KEY) {
+      if (!this._data.currentCommentEmoji || !this._data.currentCommentText) {
+        return;
+      }
+      this._data = Popup.parseStateToData(this._data);
+      this.updateElement();
+      this._callback.addComment(this._data);
+    }
+  }
+
+  _changeEmojiHandler(evt) {
+    evt.preventDefault();
+    this.updateData({ currentCommentEmoji: evt.target.value });
+  }
+
+  _inputCommentTextHandler(evt) {
+    evt.preventDefault();
+    this.updateData({ currentCommentText: evt.target.value }, false);
   }
 
   _closePopupHandler(evt) {
@@ -221,5 +298,36 @@ export default class Popup extends AbstractView {
     this.getElement()
       .querySelector('.film-details__control-label--favorite')
       .addEventListener('click', this._favoritesClickHandler);
+  }
+
+  setAddCommentHandler(callback) {
+    this._callback.addComment = callback;
+  }
+
+  static parseDataToState(movieData) {
+    return Object.assign(
+      {},
+      movieData,
+      {
+        currentCommentEmoji: 'currentEmoji' in movieData,
+        currentCommentText: '',
+      },
+    );
+  }
+
+  static parseStateToData(movieData) {
+    movieData = Object.assign({}, movieData);
+
+    const newComment = addNewComment();
+
+    newComment.comment = movieData.currentCommentText;
+    newComment.emotion = movieData.currentCommentEmoji;
+
+    movieData.comments.push(newComment);
+
+    delete movieData.currentCommentText;
+    delete movieData.currentCommentEmoji;
+
+    return movieData;
   }
 }

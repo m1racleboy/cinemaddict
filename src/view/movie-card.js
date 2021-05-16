@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
+import { getDuration } from '../utils/movie.js';
 
 const MAX_DESCRIPTION_LENGTH = 139;
 const CONTROL_ACTIVE = ' film-card__controls-item--active';
@@ -22,12 +23,12 @@ const createMovieCardTemplate = (movie = {}) => {
             <p class="film-card__rating">${rating}</p>
             <p class="film-card__info">
               <span class="film-card__year">${+dayjs(date).year()}</span>
-              <span class="film-card__duration">${duration}</span>
+              <span class="film-card__duration">${getDuration(duration)}</span>
               <span class="film-card__genre">${genre}</span>
             </p>
             <img src=${poster} alt="" class="film-card__poster">
             <p class="film-card__description">${description.length > MAX_DESCRIPTION_LENGTH ? description.substr(0, MAX_DESCRIPTION_LENGTH) + '...' : description}</p>
-            <a class="film-card__comments">${comments.length} comments</a>
+            <a class="film-card__comments">${comments.length} ${comments.length === 1 ? 'comment' : 'comments'}</a>
             <div class="film-card__controls">
               <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist${isWatchList ? CONTROL_ACTIVE : ''}" type="button">Add to watchlist</button>
               <button class="film-card__controls-item button film-card__controls-item--mark-as-watched${isHistory ? CONTROL_ACTIVE : ''}" type="button">Mark as watched</button>

@@ -1,5 +1,5 @@
 import { EMOJIS } from '../const.js';
-import { getRandomArrayElement } from '../utils/common.js';
+import { getRandomArrayElement, getRandomInteger } from '../utils/common.js';
 import dayjs from 'dayjs';
 import { nanoid } from 'nanoid';
 
@@ -21,11 +21,16 @@ const COMMENTS = [
 ];
 
 export const getComment = () => {
+  const date = dayjs().add(getRandomInteger(-2, -1), 'year')
+    .add(getRandomInteger(1, 12), 'month')
+    .add(getRandomInteger(1, 31), 'day')
+    .toDate();
+
   return {
     id: nanoid(),
     author: getRandomArrayElement(AUTHORS),
     comment: getRandomArrayElement(COMMENTS),
-    date: dayjs().toDate(),
+    date: date,
     emotion: getRandomArrayElement(EMOJIS),
   };
 };

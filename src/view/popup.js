@@ -1,22 +1,8 @@
 import dayjs from 'dayjs';
+import he from 'he';
 import SmartView from './smart.js';
 import { EMOJIS } from '../const.js';
 import { getDuration } from '../utils/movie.js';
-import { nanoid } from 'nanoid';
-
-const ENTER_KEY = 13;
-
-const addNewComment = () => {
-  const comment = {
-    id: nanoid(),
-    author: 'Me',
-    comment: '',
-    date: dayjs(),
-    emotion: null,
-  };
-
-  return comment;
-};
 
 const getChecked = (check) => check ? 'checked' : '';
 
@@ -35,25 +21,25 @@ const createCommentTemplate = (comments) => {
     return date1.diff(date2);
   });
 
-  return Object.values(comments).map(({ author, comment, date, emotion }) =>
+  return Object.values(comments).map(({ id, author, comment, date, emotion }) =>
     `<li class='film-details__comment'>
       <span class='film-details__comment-emoji'>
         <img src='./images/emoji/${emotion}.png' width='55' height='55' alt='emoji-${emotion}'>
       </span>
       <div>
-        <p class='film-details__comment-text'>${comment}</p>
+        <p class='film-details__comment-text'>${he.encode(comment)}</p>
         <p class='film-details__comment-info'>
           <span class='film-details__comment-author'>${author}</span>
           <span class='film-details__comment-day'>${dayjs(date).format('YYYY/MM/DD HH:mm')}</span>
-          <button type='button' class='film-details__comment-delete'>Delete</button>
+          <button type='button' class='film-details__comment-delete' data-comment-id="${id}">Delete</button>
         </p>
       </div>
      </li>
   `).join('');
 };
 
-const createEmojiListTemplate = (currentEmoji) => {
-  return EMOJIS.map((emoji) => `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}' ${emoji === currentEmoji ? 'checked' : ''}>
+const createEmojiListTemplate = (checkedEmoji) => {
+  return EMOJIS.map((emoji) => `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}' ${emoji === checkedEmoji ? 'checked' : ''}>
                       <label class='film-details__emoji-label' for='emoji-${emoji}'>
                         <img src='./images/emoji/${emoji}.png' width='30' height='30' alt='emoji'>
                       </label>`).join('');
@@ -71,8 +57,9 @@ const createPopupTemplate = (movie) => {
       isWatchList, isHistory, isFavorite,
     },
     comments,
-    currentCommentEmoji,
-    currentCommentText,
+    isEmojiChecked,
+    checkedEmoji,
+    commentText,
   } = movie;
 
   const commentsCount = comments.length;
@@ -171,13 +158,13 @@ const createPopupTemplate = (movie) => {
                   </ul>
                   <div class='film-details__new-comment'>
                     <div class='film-details__add-emoji-label'>
-                      ${currentCommentEmoji ? `<img src="images/emoji/${currentCommentEmoji}.png" width="55" height="55" alt="emoji-smile">` : ''}
+                      ${isEmojiChecked ? `<img src="images/emoji/${checkedEmoji}.png" width="55" height="55" alt="emoji-${checkedEmoji}">` : ''}
                     </div>
                     <label class='film-details__comment-label'>
-                      <textarea class='film-details__comment-input' placeholder='Select reaction below and write comment here' name='comment'>${currentCommentText ? currentCommentText : ''}</textarea>
+                      <textarea class='film-details__comment-input' placeholder='Select reaction below and write comment here' name='comment'>${commentText ? he.encode(commentText) : ''}</textarea>
                     </label>
                     <div class='film-details__emoji-list'>
-                      ${createEmojiListTemplate(currentCommentEmoji)}
+                      ${createEmojiListTemplate(checkedEmoji)}
                     </div>
                   </div>
                 </section>
@@ -190,69 +177,42 @@ export default class Popup extends SmartView {
   constructor(movie) {
     super();
 
-    this._data = Popup.parseDataToState(movie);
+    this._data = movie;
     this._element = null;
 
     this._closePopupHandler = this._closePopupHandler.bind(this);
     this._watchListClickHandler = this._watchListClickHandler.bind(this);
     this._historyClickHandler = this._historyClickHandler.bind(this);
     this._favoritesClickHandler = this._favoritesClickHandler.bind(this);
-    this._changeEmojiHandler = this._changeEmojiHandler.bind(this);
-    this._inputCommentTextHandler = this._inputCommentTextHandler.bind(this);
-    this._sendCommentHandler = this._sendCommentHandler.bind(this);
-
-    this._setInnerHandlers();
+    this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
   }
 
   getTemplate() {
     return createPopupTemplate(this._data);
   }
 
-  reset(movie) {
-    this.updateData(
-      Popup.parseDataToState(movie),
-    );
-  }
-
   restoreHandlers() {
-    this._setInnerHandlers();
-
     this.setClosePopupHandler(this._callback.click);
     this.setWatchListClickHandler(this._callback.watchListClick);
     this.setHistoryClickHandler(this._callback.watchedClick);
     this.setFavoritesClickHandler(this._callback.favoritesClick);
+    this.setEmojiChangeHandler();
   }
 
-  _setInnerHandlers() {
-    this.getElement()
-      .querySelector('.film-details__emoji-list')
-      .addEventListener('change', this._changeEmojiHandler);
-    this.getElement()
-      .querySelector('.film-details__comment-input')
-      .addEventListener('input', this._inputCommentTextHandler);
-    this.getElement()
-      .addEventListener('keydown', this._sendCommentHandler);
-  }
+  _emojiChangeHandler(evt) {
+    if (evt.target.tagName === 'INPUT') {
+      evt.preventDefault();
 
-  _sendCommentHandler(evt) {
-    if ((evt.ctrlKey || evt.metaKey) && evt.keyCode === ENTER_KEY) {
-      if (!this._data.currentCommentEmoji || !this._data.currentCommentText) {
-        return;
-      }
-      this._data = Popup.parseStateToData(this._data);
-      this.updateElement();
-      this._callback.addComment(this._data);
+      const scrollTop = this.getElement().scrollTop;
+
+      this.updateData({
+        isEmojiChecked: true,
+        checkedEmoji: evt.target.value,
+        commentText: this.getElement().querySelector('.film-details__comment-input').value,
+      });
+
+      this.getElement().scrollTop = scrollTop;
     }
-  }
-
-  _changeEmojiHandler(evt) {
-    evt.preventDefault();
-    this.updateData({ currentCommentEmoji: evt.target.value });
-  }
-
-  _inputCommentTextHandler(evt) {
-    evt.preventDefault();
-    this.updateData({ currentCommentText: evt.target.value }, false);
   }
 
   _closePopupHandler(evt) {
@@ -300,34 +260,9 @@ export default class Popup extends SmartView {
       .addEventListener('click', this._favoritesClickHandler);
   }
 
-  setAddCommentHandler(callback) {
-    this._callback.addComment = callback;
-  }
-
-  static parseDataToState(movieData) {
-    return Object.assign(
-      {},
-      movieData,
-      {
-        currentCommentEmoji: 'currentEmoji' in movieData,
-        currentCommentText: '',
-      },
-    );
-  }
-
-  static parseStateToData(movieData) {
-    movieData = Object.assign({}, movieData);
-
-    const newComment = addNewComment();
-
-    newComment.comment = movieData.currentCommentText;
-    newComment.emotion = movieData.currentCommentEmoji;
-
-    movieData.comments.push(newComment);
-
-    delete movieData.currentCommentText;
-    delete movieData.currentCommentEmoji;
-
-    return movieData;
+  setEmojiChangeHandler() {
+    this.getElement()
+      .querySelector('.film-details__emoji-list')
+      .addEventListener('change', this._emojiChangeHandler);
   }
 }

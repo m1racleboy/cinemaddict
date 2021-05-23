@@ -1,5 +1,6 @@
 import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
+import { UserAction, UpdateType } from '../const.js';
 import { siteBodyElement } from '../main.js';
 import { render, RenderPosition, replace, remove, openPopup } from '../utils/render.js';
 
@@ -27,7 +28,6 @@ export default class Movie {
     this._handleWatchListClick = this._handleWatchListClick.bind(this);
     this._handleHistoryClick = this._handleHistoryClick.bind(this);
     this._handleFavoritesClick = this._handleFavoritesClick.bind(this);
-    this._handleAddComment = this._handleAddComment.bind(this);
   }
 
   init(movie) {
@@ -74,7 +74,7 @@ export default class Movie {
     this._popupComponent.setWatchListClickHandler(this._handleWatchListClick);
     this._popupComponent.setHistoryClickHandler(this._handleHistoryClick);
     this._popupComponent.setFavoritesClickHandler(this._handleFavoritesClick);
-    this._popupComponent.setAddCommentHandler(this._handleAddComment);
+    this._popupComponent.setEmojiChangeHandler();
 
     if (prevPopupComponent === null) {
       openPopup(this._popupComponent);
@@ -93,7 +93,6 @@ export default class Movie {
   }
 
   _closePopup() {
-    this._popupComponent.reset(this._movie);
     this._popupComponent.getElement().remove();
     this._popupComponent = null;
     this._mode = Mode.DEFAULT;
@@ -117,41 +116,42 @@ export default class Movie {
   }
 
   _handleWatchListClick() {
-    this._changeData({
-      ...this._movie,
-      user_details: {
-        ...this._movie.user_details,
-        isWatchList: !this._movie.user_details.isWatchList,
-      },
-    });
+    this._changeData(
+      UserAction.UPDATE_MOVIE,
+      UpdateType.MINOR,
+      {
+        ...this._movie,
+        user_details: {
+          ...this._movie.user_details,
+          isWatchList: !this._movie.user_details.isWatchList,
+        },
+      });
   }
 
   _handleHistoryClick() {
-    this._changeData({
-      ...this._movie,
-      user_details: {
-        ...this._movie.user_details,
-        isHistory: !this._movie.user_details.isHistory,
-      },
-    });
+    this._changeData(
+      UserAction.UPDATE_MOVIE,
+      UpdateType.MINOR,
+      {
+        ...this._movie,
+        user_details: {
+          ...this._movie.user_details,
+          isHistory: !this._movie.user_details.isHistory,
+        },
+      });
   }
 
   _handleFavoritesClick() {
-    this._changeData({
-      ...this._movie,
-      user_details: {
-        ...this._movie.user_details,
-        isFavorite: !this._movie.user_details.isFavorite,
-      },
-    });
-  }
-
-  _handleAddComment(data) {
-    const comments = [...data.comments];
-    this._changeData({
-      ...this._movie,
-      comments: comments,
-    });
+    this._changeData(
+      UserAction.UPDATE_MOVIE,
+      UpdateType.MINOR,
+      {
+        ...this._movie,
+        user_details: {
+          ...this._movie.user_details,
+          isFavorite: !this._movie.user_details.isFavorite,
+        },
+      });
   }
 }
 

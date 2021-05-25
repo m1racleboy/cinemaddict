@@ -89,7 +89,7 @@ export const createMovieMock = () => {
   const ratingA = getRandomInteger(0, HIGH_RATING);
   const ratingB = +`${ratingA === 10 ? ratingA : ratingA + `.${getRandomInteger(0, 9)}`}`;
   const comments = [];
-
+  const watched = Boolean(getRandomInteger(0, 1));
   for (let i = 0; i < getRandomInteger(0, COMMENT_COUNT); i++) {
     comments[i] = getComment();
   }
@@ -120,9 +120,9 @@ export const createMovieMock = () => {
     comments: comments,
     user_details: {
       isWatchList: Boolean(getRandomInteger(0, 1)),
-      isHistory: Boolean(getRandomInteger(0, 1)),
+      isHistory: watched,
       isFavorite: Boolean(getRandomInteger(0, 1)),
-      watching_date: dayjs().toDate(),
+      watching_date: watched ? dayjs(getRandomInteger(+dayjs().subtract(12, 'month'), +dayjs())).format() : null,
     },
   };
 };

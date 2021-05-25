@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import AbstractView from './abstract.js';
-import { getDuration } from '../utils/movie.js';
+import { getDuration } from '../utils/stats.js';
 
 const MAX_DESCRIPTION_LENGTH = 139;
 const CONTROL_ACTIVE = ' film-card__controls-item--active';

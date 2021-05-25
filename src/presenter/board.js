@@ -13,7 +13,7 @@ import { render, RenderPosition, remove } from '../utils/render.js';
 const MOVIES_COUNT_PER_STEP = 5;
 
 export default class Board {
-  constructor(boardContainer, moviesModel, filterModel) {
+  constructor(boardContainer, moviesModel, filterModel, statsComponent) {
     this._boardContainer = boardContainer;
 
     this._moviesModel = moviesModel;
@@ -23,12 +23,15 @@ export default class Board {
     this._moviePresenter = {};
     this._currentSortType = Sort.DEFAULT;
 
+    this.isShown = true;
+
     this._sortComponent = null;
     this._showMoreButtonComponent = null;
 
     this._boardComponent = new MoviesBoardView();
     this._allMoviesComponent = new AllMoviesView();
     this._noMoviesComponent = new NoMovieView();
+    this._statsComponent = statsComponent;
 
     this._handleViewAction = this._handleViewAction.bind(this);
     this._handleModelEvent = this._handleModelEvent.bind(this);
@@ -47,6 +50,20 @@ export default class Board {
     this._allMoviesContainer = this._boardComponent.getElement().querySelector('.films-list__container');
 
     this._renderBoard();
+  }
+
+  show() {
+    this._boardComponent.show();
+    this._sortComponent.show();
+
+    this.isShown = true;
+  }
+
+  hide() {
+    this._boardComponent.hide();
+    this._sortComponent.hide();
+
+    this.isShown = false;
   }
 
   _getMovies() {
@@ -98,6 +115,8 @@ export default class Board {
         this._renderBoard();
         break;
     }
+
+    this._statsComponent.updateData({ movies: this._getMovies().filter((movie) => movie.user_details.isHistory) });
   }
 
   _handleSortTypeChange(sortType) {

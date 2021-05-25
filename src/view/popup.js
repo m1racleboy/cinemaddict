@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 import he from 'he';
 import SmartView from './smart.js';
 import { EMOJIS } from '../const.js';
-import { getDuration } from '../utils/movie.js';
+import { getDuration } from '../utils/stats.js';
 
 const getChecked = (check) => check ? 'checked' : '';
 

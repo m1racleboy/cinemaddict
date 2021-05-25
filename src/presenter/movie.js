@@ -3,6 +3,8 @@ import PopupView from '../view/popup.js';
 import { UserAction, UpdateType } from '../const.js';
 import { siteBodyElement } from '../main.js';
 import { render, RenderPosition, replace, remove, openPopup } from '../utils/render.js';
+import dayjs from 'dayjs';
+import UserRank from '../view/user-rank.js';
 
 const ESCAPE_KEY = 'Escape';
 
@@ -129,6 +131,7 @@ export default class Movie {
   }
 
   _handleHistoryClick() {
+    const watched = this._movie.user_details.isHistory;
     this._changeData(
       UserAction.UPDATE_MOVIE,
       UpdateType.MINOR,
@@ -136,9 +139,11 @@ export default class Movie {
         ...this._movie,
         user_details: {
           ...this._movie.user_details,
-          isHistory: !this._movie.user_details.isHistory,
+          isHistory: !watched,
+          watching_date: !watched ? dayjs().format() : null,
         },
       });
+    render(document.querySelector('header'), new UserRank(this._movies), RenderPosition.BEFOREEND);
   }
 
   _handleFavoritesClick() {

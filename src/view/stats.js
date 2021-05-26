@@ -184,7 +184,9 @@ export default class Stats extends SmartView {
 
   setFiltersChangeHandler(callback) {
     this._callback.filtersChange = callback;
-    this.getElement().querySelector('.statistic__filters').addEventListener('change', this._filtersChangeHandler);
+    this.getElement()
+      .querySelector('.statistic__filters')
+      .addEventListener('change', this._filtersChangeHandler);
   }
 
   restoreHandlers() {

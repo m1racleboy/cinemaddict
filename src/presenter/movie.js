@@ -143,7 +143,6 @@ export default class Movie {
           watching_date: !watched ? dayjs().format() : null,
         },
       });
-    render(document.querySelector('header'), new UserRank(this._movies), RenderPosition.BEFOREEND);
   }
 
   _handleFavoritesClick() {

@@ -21,7 +21,7 @@ ratingMap.set({
 }, 'Movie Buff');
 
 export const getUserRank = (movies) => {
-  const watchedMoviesCount = movies.filter((movie) => movie.user_details.isHistory).length;
+  const watchedMoviesCount = movies.filter((movie) => movie.userDetails.isHistory).length;
 
   for (const value of ratingMap) {
     if (watchedMoviesCount >= value[0].from && watchedMoviesCount <= value[0].to) {

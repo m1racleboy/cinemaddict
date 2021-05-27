@@ -1,5 +1,8 @@
 export const EMOJIS = ['smile', 'sleeping', 'puke', 'angry'];
 
+export const CLASS_VISUALLY_HIDDEN = 'visually-hidden';
+export const CLASS_NAVIGATION_ACTIVE = 'main-navigation__item--active';
+
 export const Sort = {
   DEFAULT: 'default',
   DATE: 'date',
@@ -24,9 +27,6 @@ export const FilterType = {
   HISTORY: 'history',
   FAVORITES: 'favorites',
 };
-
-export const CLASS_VISUALLY_HIDDEN = 'visually-hidden';
-export const CLASS_NAVIGATION_ACTIVE = 'main-navigation__item--active';
 
 export const StatsFilter = {
   ALL_TIME: 'all-time',

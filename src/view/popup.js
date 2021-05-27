@@ -47,13 +47,13 @@ const createEmojiListTemplate = (checkedEmoji) => {
 
 const createPopupTemplate = (movie) => {
   const {
-    movie_info: {
-      title, poster, age_rating, rating, director, writers, actors, genre, description, duration,
+    movieInfo: {
+      title, poster, ageRating, rating, director, writers, actors, genre, description, duration, alternativeTitle,
     },
     release: {
-      date, release_country,
+      date, releaseCountry,
     },
-    user_details: {
+    userDetails: {
       isWatchList, isHistory, isFavorite,
     },
     comments,
@@ -99,14 +99,14 @@ const createPopupTemplate = (movie) => {
                 </div>
                 <div class='film-details__info-wrap'>
                   <div class='film-details__poster'>
-                    <img class='film-details__poster-img' src=${poster} alt=''>
-                    <p class='film-details__age'>${age_rating}+</p>
+                    <img class='film-details__poster-img' src="${poster}" alt="${title}">
+                    <p class='film-details__age'>${ageRating}+</p>
                   </div>
                   <div class='film-details__info'>
                     <div class='film-details__info-head'>
                       <div class='film-details__title-wrap'>
                         <h3 class='film-details__title'>${title}</h3>
-                        <p class='film-details__title-original'>Original: ${title}</p>
+                        <p class='film-details__title-original'>Original: ${alternativeTitle}</p>
                       </div>
                       <div class='film-details__rating'>
                         <p class='film-details__total-rating'>${rating}</p>
@@ -135,7 +135,7 @@ const createPopupTemplate = (movie) => {
                       </tr>
                       <tr class='film-details__row'>
                         <td class='film-details__term'>Country</td>
-                        <td class='film-details__cell'>${release_country}</td>
+                        <td class='film-details__cell'>${releaseCountry}</td>
                       </tr>
                       <tr class='film-details__row'>
                         <td class='film-details__term'>${genre.length === 1 ? 'Genre' : 'Genres'}</td>
@@ -203,15 +203,11 @@ export default class Popup extends SmartView {
     if (evt.target.tagName === 'INPUT') {
       evt.preventDefault();
 
-      const scrollTop = this.getElement().scrollTop;
-
       this.updateData({
         isEmojiChecked: true,
         checkedEmoji: evt.target.value,
         commentText: this.getElement().querySelector('.film-details__comment-input').value,
       });
-
-      this.getElement().scrollTop = scrollTop;
     }
   }
 
@@ -242,21 +238,21 @@ export default class Popup extends SmartView {
   setWatchListClickHandler(callback) {
     this._callback.watchListClick = callback;
     this.getElement()
-      .querySelector('.film-details__control-label--watchlist')
+      .querySelector('#watchlist')
       .addEventListener('click', this._watchListClickHandler);
   }
 
   setHistoryClickHandler(callback) {
     this._callback.watchedClick = callback;
     this.getElement()
-      .querySelector('.film-details__control-label--watched')
+      .querySelector('#watched')
       .addEventListener('click', this._historyClickHandler);
   }
 
   setFavoritesClickHandler(callback) {
     this._callback.favoritesClick = callback;
     this.getElement()
-      .querySelector('.film-details__control-label--favorite')
+      .querySelector('#favorite')
       .addEventListener('click', this._favoritesClickHandler);
   }
 

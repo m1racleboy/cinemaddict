@@ -7,10 +7,10 @@ const CONTROL_ACTIVE = ' film-card__controls-item--active';
 
 const createMovieCardTemplate = (movie = {}) => {
   const {
-    movie_info: {
+    movieInfo: {
       title, rating, poster, description, duration, genre,
     },
-    user_details: {
+    userDetails: {
       isWatchList, isHistory, isFavorite,
     },
     comments,
@@ -26,7 +26,7 @@ const createMovieCardTemplate = (movie = {}) => {
               <span class="film-card__duration">${getDuration(duration)}</span>
               <span class="film-card__genre">${genre}</span>
             </p>
-            <img src=${poster} alt="" class="film-card__poster">
+            <img src="${poster}" alt="${title}" class="film-card__poster">
             <p class="film-card__description">${description.length > MAX_DESCRIPTION_LENGTH ? description.substr(0, MAX_DESCRIPTION_LENGTH) + '...' : description}</p>
             <a class="film-card__comments">${comments.length} ${comments.length === 1 ? 'comment' : 'comments'}</a>
             <div class="film-card__controls">

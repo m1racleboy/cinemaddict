@@ -14,11 +14,11 @@ const createGenresData = (movies, period) => {
   const minDatePeriod = getMinDatePeriod(period);
 
   if (minDatePeriod) {
-    movies = movies.filter((movie) => isDateAfter(minDatePeriod, movie.user_details.watching_date));
+    movies = movies.filter((movie) => isDateAfter(minDatePeriod, movie.userDetails.watchingDate));
   }
 
   movies.forEach((movie) => {
-    movie.movie_info.genre.split(',').forEach((genre) => movieGenres.push(genre));
+    movie.movieInfo.genre.split(',').forEach((genre) => movieGenres.push(genre));
   });
 
   const uniqGenres = makeItemsUniq(movieGenres);
@@ -107,7 +107,7 @@ const createStatsTemplate = (data) => {
   const { movies, period } = data;
   const genresData = createGenresData(movies, period);
   const totalDuration = genresData.filteredMovies.reduce((accumulator, movie) => {
-    return accumulator + (movie.movie_info.duration);
+    return accumulator + (movie.movieInfo.duration);
   }, 0);
   const topGenre = genresData.uniqGenres[genresData.movieByGenreCounts.indexOf(Math.max(...genresData.movieByGenreCounts))];
 

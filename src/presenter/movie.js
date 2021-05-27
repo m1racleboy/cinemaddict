@@ -4,7 +4,6 @@ import { UserAction, UpdateType } from '../const.js';
 import { siteBodyElement } from '../main.js';
 import { render, RenderPosition, replace, remove, openPopup } from '../utils/render.js';
 import dayjs from 'dayjs';
-import UserRank from '../view/user-rank.js';
 
 const ESCAPE_KEY = 'Escape';
 
@@ -123,24 +122,24 @@ export default class Movie {
       UpdateType.MINOR,
       {
         ...this._movie,
-        user_details: {
-          ...this._movie.user_details,
-          isWatchList: !this._movie.user_details.isWatchList,
+        userDetails: {
+          ...this._movie.userDetails,
+          isWatchList: !this._movie.userDetails.isWatchList,
         },
       });
   }
 
   _handleHistoryClick() {
-    const watched = this._movie.user_details.isHistory;
+    const watched = this._movie.userDetails.isHistory;
     this._changeData(
       UserAction.UPDATE_MOVIE,
       UpdateType.MINOR,
       {
         ...this._movie,
-        user_details: {
-          ...this._movie.user_details,
+        userDetails: {
+          ...this._movie.userDetails,
           isHistory: !watched,
-          watching_date: !watched ? dayjs().format() : null,
+          watchingDate: !watched ? dayjs().format() : null,
         },
       });
   }
@@ -151,9 +150,9 @@ export default class Movie {
       UpdateType.MINOR,
       {
         ...this._movie,
-        user_details: {
-          ...this._movie.user_details,
-          isFavorite: !this._movie.user_details.isFavorite,
+        userDetails: {
+          ...this._movie.userDetails,
+          isFavorite: !this._movie.userDetails.isFavorite,
         },
       });
   }

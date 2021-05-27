@@ -25,7 +25,7 @@ const movies = new Array(MOVIES_COUNT).fill().map(() => createMovieMock());
 const userRank = getUserRank(movies);
 
 const menuComponent = new MenuView();
-const statsComponent = new StatsView(movies.filter((movie) => movie.user_details.isHistory));
+const statsComponent = new StatsView(movies.filter((movie) => movie.userDetails.isHistory));
 const userRankComponent = new UserRankView(userRank);
 
 if (movies.length) {
@@ -49,13 +49,7 @@ render(siteMainElement, menuComponent, RenderPosition.AFTERBEGIN);
 menuComponent.setStatsClickHandler(onStatsClick);
 
 const boardPresenter = new BoardPresenter(siteMainElement, movieModel, filterModel, statsComponent);
-const filterPresenter = new FilterPresenter(
-  menuComponent.getElement(),
-  filterModel,
-  movieModel,
-  boardPresenter,
-  statsComponent,
-  menuComponent);
+const filterPresenter = new FilterPresenter(menuComponent.getElement(), filterModel, movieModel, boardPresenter, statsComponent, menuComponent);
 
 filterPresenter.init();
 boardPresenter.init();

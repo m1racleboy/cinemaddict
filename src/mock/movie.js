@@ -101,11 +101,12 @@ export const createMovieMock = () => {
 
   return {
     id: nanoid(),
-    movie_info: {
+    movieInfo: {
       title: title,
+      alternativeTitle: title,
       rating: ratingB,
       poster: getRandomArrayElement(POSTERS),
-      age_rating: getRandomArrayElement(AGE_RATINGS),
+      ageRating: getRandomArrayElement(AGE_RATINGS),
       director: getRandomArrayElement(DIRECTORS),
       writers: getRandomArray(WRITERS, getRandomInteger(1, 4)).join(', '),
       actors: getRandomArray(ACTORS, getRandomInteger(1, 6)).join(', '),
@@ -115,14 +116,14 @@ export const createMovieMock = () => {
     },
     release: {
       date: date,
-      release_country: getRandomArrayElement(COUNTRIES),
+      releaseCountry: getRandomArrayElement(COUNTRIES),
     },
     comments: comments,
-    user_details: {
+    userDetails: {
       isWatchList: Boolean(getRandomInteger(0, 1)),
       isHistory: watched,
       isFavorite: Boolean(getRandomInteger(0, 1)),
-      watching_date: watched ? dayjs(getRandomInteger(+dayjs().subtract(12, 'month'), +dayjs())).format() : null,
+      watchingDate: watched ? dayjs(getRandomInteger(+dayjs().subtract(12, 'month'), +dayjs())).format() : null,
     },
   };
 };

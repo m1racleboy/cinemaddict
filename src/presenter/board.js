@@ -124,7 +124,7 @@ export default class Board {
         break;
     }
 
-    this._statsComponent.updateData({ movies: this._getMovies().filter((movie) => movie.userDetails.isHistory) });
+    this._statsComponent.updateData({ movies: this._moviesModel.getMovies().filter((movie) => movie.userDetails.isHistory) });
   }
 
   _updateRating() {

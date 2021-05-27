@@ -7,8 +7,8 @@ import UserRankView from '../view/user-rank.js';
 
 import MoviePresenter from './movie.js';
 
-import { filter } from '../utils/filter.js';
 import { Sort, UpdateType, UserAction } from '../const.js';
+import { filter } from '../utils/filter.js';
 import { sortMoviesByRating, sortMoviesByDate } from '../utils/movie.js';
 import { render, RenderPosition, remove } from '../utils/render.js';
 import { getUserRank } from '../utils/user-rank.js';
@@ -73,7 +73,7 @@ export default class Board {
 
   _getMovies() {
     const filterType = this._filterModel.getFilter();
-    const movies = this._moviesModel.getMovies();
+    const movies = this._moviesModel.getMovies().slice();
     const filteredMovies = filter[filterType](movies);
 
     switch (this._currentSortType) {

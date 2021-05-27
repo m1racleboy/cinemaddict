@@ -7,7 +7,7 @@ const MINUTES_PER_HOUR = 60;
 export const makeItemsUniq = (items) => [...new Set(items)];
 
 export const countMoviesByGenre = (movies, genre) => {
-  return movies.filter((movie) => movie.movieInfo.genre.split(',').some((genreItem) => genreItem === genre)).length;
+  return movies.filter((movie) => movie.movieInfo.genre.some((genreItem) => genreItem === genre)).length;
 };
 
 export const getMinDatePeriod = (period) => {

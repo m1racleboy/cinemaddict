@@ -35,3 +35,10 @@ export const StatsFilter = {
   MONTH: 'month',
   YEAR: 'year',
 };
+
+export const PopupButtons = {
+  WATCH_LIST: 'isWatchList',
+  WATCHED: 'isHistory',
+  FAVORITE: 'isFavorite',
+  DELETE: 'delete',
+};

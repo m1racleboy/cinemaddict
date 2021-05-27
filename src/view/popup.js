@@ -1,17 +1,8 @@
 import dayjs from 'dayjs';
 import he from 'he';
 import SmartView from './smart.js';
-import { EMOJIS } from '../const.js';
+import { EMOJIS, PopupButtons } from '../const.js';
 import { getDuration } from '../utils/stats.js';
-
-const getChecked = (check) => check ? 'checked' : '';
-
-const createControlTemplate = (control) => {
-  const { name, title, check } = control;
-
-  return `<input type='checkbox' class='film-details__control-input visually-hidden' id='${name}' name='${name}' ${getChecked(check)}>
-          <label for='${name}' class='film-details__control-label film-details__control-label--${name}'>${title}</label>`;
-};
 
 const createCommentTemplate = (comments) => {
   comments.sort((a, b) => {
@@ -65,32 +56,6 @@ const createPopupTemplate = (movie) => {
   const commentsCount = comments.length;
   const commentsTemplate = createCommentTemplate(comments);
 
-  const Controls = [
-    {
-      name: 'watchlist',
-      title: 'Add to watchlist',
-      check: isWatchList,
-    },
-    {
-      name: 'watched',
-      title: 'Already watched',
-      check: isHistory,
-    },
-    {
-      name: 'favorite',
-      title: 'Add to favorites',
-      check: isFavorite,
-    },
-  ];
-
-  Controls.map((control) => {
-    return control;
-  });
-
-  const controlItemsTemplate = Controls
-    .map((control) => createControlTemplate(control))
-    .join('');
-
   return `<section class='film-details'>
             <form class='film-details__inner' action='' method='get'>
               <div class='film-details__top-container'>
@@ -119,11 +84,11 @@ const createPopupTemplate = (movie) => {
                       </tr>
                       <tr class='film-details__row'>
                         <td class='film-details__term'>Writers</td>
-                        <td class='film-details__cell'>${writers}</td>
+                        <td class='film-details__cell'>${writers.join(', ')}</td>
                       </tr>
                       <tr class='film-details__row'>
                         <td class='film-details__term'>Actors</td>
-                        <td class='film-details__cell'>${actors}</td>
+                        <td class='film-details__cell'>${actors.join(', ')}</td>
                       </tr>
                       <tr class='film-details__row'>
                         <td class='film-details__term'>Release Date</td>
@@ -140,14 +105,24 @@ const createPopupTemplate = (movie) => {
                       <tr class='film-details__row'>
                         <td class='film-details__term'>${genre.length === 1 ? 'Genre' : 'Genres'}</td>
                         <td class='film-details__cell'>
-                          <span class='film-details__genre'>${genre}</span>
+                          <span class='film-details__genre'>${genre.join(', ')}</span>
                       </tr>
                     </table>
                     <p class='film-details__film-description'>${description}</p>
                   </div>
                 </div>
                 <section class='film-details__controls'>
-                  ${controlItemsTemplate}
+                  <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist"
+                  data-control="${PopupButtons.WATCH_LIST}" ${isWatchList ? 'checked' : ''}>
+                  <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
+
+                  <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched"
+                  data-control="${PopupButtons.WATCHED}" ${isHistory ? 'checked' : ''}>
+                  <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
+
+                  <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite"
+                  data-control="${PopupButtons.FAVORITE}" ${isFavorite ? 'checked' : ''}>
+                  <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
                 </section>
               </div>
               <div class='film-details__bottom-container'>
@@ -181,9 +156,7 @@ export default class Popup extends SmartView {
     this._element = null;
 
     this._closePopupHandler = this._closePopupHandler.bind(this);
-    this._watchListClickHandler = this._watchListClickHandler.bind(this);
-    this._historyClickHandler = this._historyClickHandler.bind(this);
-    this._favoritesClickHandler = this._favoritesClickHandler.bind(this);
+    this._changeControlsHandler = this._changeControlsHandler.bind(this);
     this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
   }
 
@@ -193,9 +166,7 @@ export default class Popup extends SmartView {
 
   restoreHandlers() {
     this.setClosePopupHandler(this._callback.click);
-    this.setWatchListClickHandler(this._callback.watchListClick);
-    this.setHistoryClickHandler(this._callback.watchedClick);
-    this.setFavoritesClickHandler(this._callback.favoritesClick);
+    this.setControlsChangeHandler(this._callback.controlsChange);
     this.setEmojiChangeHandler();
   }
 
@@ -216,16 +187,11 @@ export default class Popup extends SmartView {
     this._callback.click();
   }
 
-  _watchListClickHandler() {
-    this._callback.watchListClick();
-  }
-
-  _historyClickHandler() {
-    this._callback.watchedClick();
-  }
-
-  _favoritesClickHandler() {
-    this._callback.favoritesClick();
+  _changeControlsHandler(evt) {
+    if (evt.target.dataset.control) {
+      evt.preventDefault();
+      this._callback.controlsChange(evt.target.dataset.control);
+    }
   }
 
   setClosePopupHandler(callback) {
@@ -235,25 +201,11 @@ export default class Popup extends SmartView {
       .addEventListener('click', this._closePopupHandler);
   }
 
-  setWatchListClickHandler(callback) {
-    this._callback.watchListClick = callback;
+  setControlsChangeHandler(callback) {
+    this._callback.controlsChange = callback;
     this.getElement()
-      .querySelector('#watchlist')
-      .addEventListener('click', this._watchListClickHandler);
-  }
-
-  setHistoryClickHandler(callback) {
-    this._callback.watchedClick = callback;
-    this.getElement()
-      .querySelector('#watched')
-      .addEventListener('click', this._historyClickHandler);
-  }
-
-  setFavoritesClickHandler(callback) {
-    this._callback.favoritesClick = callback;
-    this.getElement()
-      .querySelector('#favorite')
-      .addEventListener('click', this._favoritesClickHandler);
+      .querySelector('.film-details__controls')
+      .addEventListener('change', this._changeControlsHandler);
   }
 
   setEmojiChangeHandler() {

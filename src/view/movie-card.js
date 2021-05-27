@@ -1,5 +1,8 @@
 import dayjs from 'dayjs';
+
 import AbstractView from './abstract.js';
+
+import { PopupButtons } from '../const.js';
 import { getDuration } from '../utils/stats.js';
 
 const MAX_DESCRIPTION_LENGTH = 139;
@@ -24,15 +27,18 @@ const createMovieCardTemplate = (movie = {}) => {
             <p class="film-card__info">
               <span class="film-card__year">${+dayjs(date).year()}</span>
               <span class="film-card__duration">${getDuration(duration)}</span>
-              <span class="film-card__genre">${genre}</span>
+              <span class="film-card__genre">${genre.join(', ')}</span>
             </p>
             <img src="${poster}" alt="${title}" class="film-card__poster">
             <p class="film-card__description">${description.length > MAX_DESCRIPTION_LENGTH ? description.substr(0, MAX_DESCRIPTION_LENGTH) + '...' : description}</p>
             <a class="film-card__comments">${comments.length} ${comments.length === 1 ? 'comment' : 'comments'}</a>
             <div class="film-card__controls">
-              <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist${isWatchList ? CONTROL_ACTIVE : ''}" type="button">Add to watchlist</button>
-              <button class="film-card__controls-item button film-card__controls-item--mark-as-watched${isHistory ? CONTROL_ACTIVE : ''}" type="button">Mark as watched</button>
-              <button class="film-card__controls-item button film-card__controls-item--favorite${isFavorite ? CONTROL_ACTIVE : ''}" type="button">Mark as favorite</button>
+              <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist${isWatchList ? CONTROL_ACTIVE : ''}"
+              data-control="${PopupButtons.WATCH_LIST}" type="button">Add to watchlist</button>
+              <button class="film-card__controls-item button film-card__controls-item--mark-as-watched${isHistory ? CONTROL_ACTIVE : ''}"
+              data-control="${PopupButtons.WATCHED}" type="button">Mark as watched</button>
+              <button class="film-card__controls-item button film-card__controls-item--favorite${isFavorite ? CONTROL_ACTIVE : ''}"
+              data-control="${PopupButtons.FAVORITE}" type="button">Mark as favorite</button>
             </div>
           </article>`;
 };
@@ -43,9 +49,7 @@ export default class MovieCard extends AbstractView {
     this._movie = movie;
     this._element = null;
     this._openPopupHandler = this._openPopupHandler.bind(this);
-    this._watchListClickHandler = this._watchListClickHandler.bind(this);
-    this._historyClickHandler = this._historyClickHandler.bind(this);
-    this._favoritesClickHandler = this._favoritesClickHandler.bind(this);
+    this._handleControlsClick = this._handleControlsClick.bind(this);
   }
 
   getTemplate() {
@@ -57,16 +61,16 @@ export default class MovieCard extends AbstractView {
     this._callback.click();
   }
 
-  _watchListClickHandler() {
-    this._callback.watchListClick();
+  _handleControlsClick(evt) {
+    if (evt.target.dataset.control) {
+      evt.preventDefault();
+      this._callback.controlClick(evt.target.dataset.control);
+    }
   }
 
-  _historyClickHandler() {
-    this._callback.watchedClick();
-  }
-
-  _favoritesClickHandler() {
-    this._callback.favoritesClick();
+  setButtonClickHandler(callback) {
+    this._callback.controlClick = callback;
+    this.getElement().addEventListener('click', this._handleControlsClick);
   }
 
   setOpenPopupHandler(callback) {
@@ -80,26 +84,5 @@ export default class MovieCard extends AbstractView {
     this.getElement()
       .querySelector('.film-card__comments')
       .addEventListener('click', this._openPopupHandler);
-  }
-
-  setWatchListClickHandler(callback) {
-    this._callback.watchListClick = callback;
-    this.getElement()
-      .querySelector('.film-card__controls-item--add-to-watchlist')
-      .addEventListener('click', this._watchListClickHandler);
-  }
-
-  setHistoryClickHandler(callback) {
-    this._callback.watchedClick = callback;
-    this.getElement()
-      .querySelector('.film-card__controls-item--mark-as-watched')
-      .addEventListener('click', this._historyClickHandler);
-  }
-
-  setFavoritesClickHandler(callback) {
-    this._callback.favoritesClick = callback;
-    this.getElement()
-      .querySelector('.film-card__controls-item--favorite')
-      .addEventListener('click', this._favoritesClickHandler);
   }
 }

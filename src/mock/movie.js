@@ -108,10 +108,10 @@ export const createMovieMock = () => {
       poster: getRandomArrayElement(POSTERS),
       ageRating: getRandomArrayElement(AGE_RATINGS),
       director: getRandomArrayElement(DIRECTORS),
-      writers: getRandomArray(WRITERS, getRandomInteger(1, 4)).join(', '),
-      actors: getRandomArray(ACTORS, getRandomInteger(1, 6)).join(', '),
+      writers: getRandomArray(WRITERS, getRandomInteger(1, 4)),
+      actors: getRandomArray(ACTORS, getRandomInteger(1, 6)),
       duration: getRandomInteger(10, 241),
-      genre: getRandomArray(GENRES, getRandomInteger(1, 6)).join(', '),
+      genre: getRandomArray(GENRES, getRandomInteger(1, 6)),
       description: getRandomArrayElement(DESCRIPTIONS),
     },
     release: {

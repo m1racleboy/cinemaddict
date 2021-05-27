@@ -18,7 +18,7 @@ const createGenresData = (movies, period) => {
   }
 
   movies.forEach((movie) => {
-    movie.movieInfo.genre.split(',').forEach((genre) => movieGenres.push(genre));
+    movie.movieInfo.genre.forEach((genre) => movieGenres.push(genre));
   });
 
   const uniqGenres = makeItemsUniq(movieGenres);

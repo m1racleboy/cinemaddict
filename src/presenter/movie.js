@@ -1,6 +1,6 @@
 import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
-import { UserAction, UpdateType } from '../const.js';
+import { UserAction, UpdateType, PopupButtons } from '../const.js';
 import { siteBodyElement } from '../main.js';
 import { render, RenderPosition, replace, remove, openPopup } from '../utils/render.js';
 import dayjs from 'dayjs';
@@ -25,10 +25,6 @@ export default class Movie {
     this._handleOpenPopupClick = this._handleOpenPopupClick.bind(this);
     this._handleClosePopupClick = this._handleClosePopupClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
-
-    this._handleWatchListClick = this._handleWatchListClick.bind(this);
-    this._handleHistoryClick = this._handleHistoryClick.bind(this);
-    this._handleFavoritesClick = this._handleFavoritesClick.bind(this);
   }
 
   init(movie) {
@@ -38,9 +34,9 @@ export default class Movie {
     this._movieCardComponent = new MovieCardView(movie);
 
     this._movieCardComponent.setOpenPopupHandler(this._handleOpenPopupClick);
-    this._movieCardComponent.setWatchListClickHandler(this._handleWatchListClick);
-    this._movieCardComponent.setHistoryClickHandler(this._handleHistoryClick);
-    this._movieCardComponent.setFavoritesClickHandler(this._handleFavoritesClick);
+    this._movieCardComponent.setButtonClickHandler((control) => {
+      this._handleClickControls(this._movie, control);
+    });
 
     if (prevMovieCardComponent === null) {
       render(this._container, this._movieCardComponent, RenderPosition.BEFOREEND);
@@ -72,9 +68,9 @@ export default class Movie {
     this._popupComponent = new PopupView(this._movie);
 
     this._popupComponent.setClosePopupHandler(this._handleClosePopupClick);
-    this._popupComponent.setWatchListClickHandler(this._handleWatchListClick);
-    this._popupComponent.setHistoryClickHandler(this._handleHistoryClick);
-    this._popupComponent.setFavoritesClickHandler(this._handleFavoritesClick);
+    this._popupComponent.setControlsChangeHandler((control) => {
+      this._handleClickControls(this._movie, control);
+    });
     this._popupComponent.setEmojiChangeHandler();
 
     if (prevPopupComponent === null) {
@@ -116,45 +112,18 @@ export default class Movie {
     this._closePopup();
   }
 
-  _handleWatchListClick() {
-    this._changeData(
-      UserAction.UPDATE_MOVIE,
-      UpdateType.MINOR,
-      {
-        ...this._movie,
-        userDetails: {
-          ...this._movie.userDetails,
-          isWatchList: !this._movie.userDetails.isWatchList,
-        },
-      });
-  }
+  _handleClickControls(movie, control) {
+    const userDetails = Object.assign(movie.userDetails);
+    userDetails[control] = !userDetails[control];
 
-  _handleHistoryClick() {
-    const watched = this._movie.userDetails.isHistory;
-    this._changeData(
-      UserAction.UPDATE_MOVIE,
-      UpdateType.MINOR,
-      {
-        ...this._movie,
-        userDetails: {
-          ...this._movie.userDetails,
-          isHistory: !watched,
-          watchingDate: !watched ? dayjs().format() : null,
-        },
-      });
-  }
 
-  _handleFavoritesClick() {
-    this._changeData(
-      UserAction.UPDATE_MOVIE,
-      UpdateType.MINOR,
-      {
-        ...this._movie,
-        userDetails: {
-          ...this._movie.userDetails,
-          isFavorite: !this._movie.userDetails.isFavorite,
-        },
-      });
+    if (control === PopupButtons.WATCHED) {
+      userDetails.watchingDate = userDetails.isHistory ? dayjs().format() : null;
+    }
+
+    const updatedMovie = Object.assign({}, movie, { userDetails: userDetails });
+
+    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.MINOR, updatedMovie);
   }
 }
 

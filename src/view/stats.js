@@ -4,7 +4,7 @@ import Chart from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import { StatsFilter } from '../const.js';
-import { makeItemsUniq, countMoviesByGenre, getDuration, getMinDatePeriod, isDateAfter } from '../utils/stats.js';
+import { makeItemsUniq, getCountMoviesByGenre, getDuration, getMinDatePeriod, isDateAfter } from '../utils/stats.js';
 import { getUserRank } from '../utils/user-rank.js';
 
 const BAR_HEIGHT = 50;
@@ -22,7 +22,7 @@ const createGenresData = (movies, period) => {
   });
 
   const uniqGenres = makeItemsUniq(movieGenres);
-  const movieByGenreCounts = uniqGenres.map((genre) => countMoviesByGenre(movies, genre));
+  const movieByGenreCounts = uniqGenres.map((genre) => getCountMoviesByGenre(movies, genre));
 
   uniqGenres.sort((a, b) => {
     return movieByGenreCounts[uniqGenres.indexOf(b)] - movieByGenreCounts[uniqGenres.indexOf(a)];
@@ -166,18 +166,22 @@ export default class Stats extends SmartView {
       period: StatsFilter.ALL_TIME,
     };
 
-    this._filtersChangeHandler = this._filtersChangeHandler.bind(this);
+    this._handleFiltersChange = this._handleFiltersChange.bind(this);
   }
 
   getTemplate() {
     return createStatsTemplate(this._data);
   }
 
+  restoreHandlers() {
+    this.setFiltersChangeHandler(this._callback.filtersChange);
+  }
+
   setChart() {
     renderChart(this.getElement().querySelector('.statistic__chart'), this._data);
   }
 
-  _filtersChangeHandler(evt) {
+  _handleFiltersChange(evt) {
     evt.preventDefault();
     this._callback.filtersChange(evt.target.value);
   }
@@ -186,10 +190,6 @@ export default class Stats extends SmartView {
     this._callback.filtersChange = callback;
     this.getElement()
       .querySelector('.statistic__filters')
-      .addEventListener('change', this._filtersChangeHandler);
-  }
-
-  restoreHandlers() {
-    this.setFiltersChangeHandler(this._callback.filtersChange);
+      .addEventListener('change', this._handleFiltersChange);
   }
 }

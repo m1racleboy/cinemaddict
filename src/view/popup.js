@@ -155,9 +155,9 @@ export default class Popup extends SmartView {
     this._data = movie;
     this._element = null;
 
-    this._closePopupHandler = this._closePopupHandler.bind(this);
-    this._changeControlsHandler = this._changeControlsHandler.bind(this);
-    this._emojiChangeHandler = this._emojiChangeHandler.bind(this);
+    this._handleClosePopup = this._handleClosePopup.bind(this);
+    this._handleChangeControls = this._handleChangeControls.bind(this);
+    this._handleEmojiChange = this._handleEmojiChange.bind(this);
   }
 
   getTemplate() {
@@ -170,7 +170,7 @@ export default class Popup extends SmartView {
     this.setEmojiChangeHandler();
   }
 
-  _emojiChangeHandler(evt) {
+  _handleEmojiChange(evt) {
     if (evt.target.tagName === 'INPUT') {
       evt.preventDefault();
 
@@ -182,12 +182,12 @@ export default class Popup extends SmartView {
     }
   }
 
-  _closePopupHandler(evt) {
+  _handleClosePopup(evt) {
     evt.preventDefault();
     this._callback.click();
   }
 
-  _changeControlsHandler(evt) {
+  _handleChangeControls(evt) {
     if (evt.target.dataset.control) {
       evt.preventDefault();
       this._callback.controlsChange(evt.target.dataset.control);
@@ -198,19 +198,19 @@ export default class Popup extends SmartView {
     this._callback.click = callback;
     this.getElement()
       .querySelector('.film-details__close-btn')
-      .addEventListener('click', this._closePopupHandler);
+      .addEventListener('click', this._handleClosePopup);
   }
 
   setControlsChangeHandler(callback) {
     this._callback.controlsChange = callback;
     this.getElement()
       .querySelector('.film-details__controls')
-      .addEventListener('change', this._changeControlsHandler);
+      .addEventListener('change', this._handleChangeControls);
   }
 
   setEmojiChangeHandler() {
     this.getElement()
       .querySelector('.film-details__emoji-list')
-      .addEventListener('change', this._emojiChangeHandler);
+      .addEventListener('change', this._handleEmojiChange);
   }
 }

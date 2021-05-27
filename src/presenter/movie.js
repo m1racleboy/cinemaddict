@@ -34,7 +34,7 @@ export default class Movie {
     this._movieCardComponent = new MovieCardView(movie);
 
     this._movieCardComponent.setOpenPopupHandler(this._handleOpenPopupClick);
-    this._movieCardComponent.setButtonClickHandler((control) => {
+    this._movieCardComponent.setControlsClickHandler((control) => {
       this._handleClickControls(this._movie, control);
     });
 

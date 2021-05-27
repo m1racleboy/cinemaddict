@@ -48,7 +48,7 @@ export default class MovieCard extends AbstractView {
     super();
     this._movie = movie;
     this._element = null;
-    this._openPopupHandler = this._openPopupHandler.bind(this);
+    this._handleOpenPopupClick = this._handleOpenPopupClick.bind(this);
     this._handleControlsClick = this._handleControlsClick.bind(this);
   }
 
@@ -56,7 +56,7 @@ export default class MovieCard extends AbstractView {
     return createMovieCardTemplate(this._movie);
   }
 
-  _openPopupHandler(evt) {
+  _handleOpenPopupClick(evt) {
     evt.preventDefault();
     this._callback.click();
   }
@@ -68,7 +68,7 @@ export default class MovieCard extends AbstractView {
     }
   }
 
-  setButtonClickHandler(callback) {
+  setControlsClickHandler(callback) {
     this._callback.controlClick = callback;
     this.getElement().addEventListener('click', this._handleControlsClick);
   }
@@ -77,12 +77,12 @@ export default class MovieCard extends AbstractView {
     this._callback.click = callback;
     this.getElement()
       .querySelector('.film-card__poster')
-      .addEventListener('click', this._openPopupHandler);
+      .addEventListener('click', this._handleOpenPopupClick);
     this.getElement()
       .querySelector('.film-card__title')
-      .addEventListener('click', this._openPopupHandler);
+      .addEventListener('click', this._handleOpenPopupClick);
     this.getElement()
       .querySelector('.film-card__comments')
-      .addEventListener('click', this._openPopupHandler);
+      .addEventListener('click', this._handleOpenPopupClick);
   }
 }

@@ -11,7 +11,7 @@ export default class Menu extends AbstractView {
   constructor() {
     super();
 
-    this._statsClickHandler = this._statsClickHandler.bind(this);
+    this._handleStatsClick = this._handleStatsClick.bind(this);
   }
 
   getTemplate() {
@@ -24,7 +24,7 @@ export default class Menu extends AbstractView {
       .classList.remove(CLASS_NAVIGATION_ACTIVE);
   }
 
-  _statsClickHandler(evt) {
+  _handleStatsClick(evt) {
     evt.preventDefault();
     this._callback.statsClick();
     evt.target.classList.add(CLASS_NAVIGATION_ACTIVE);
@@ -34,6 +34,6 @@ export default class Menu extends AbstractView {
     this._callback.statsClick = callback;
     this.getElement()
       .querySelector('.main-navigation__additional')
-      .addEventListener('click', this._statsClickHandler);
+      .addEventListener('click', this._handleStatsClick);
   }
 }

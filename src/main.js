@@ -1,11 +1,9 @@
-import UserRankView from './view/user-rank.js';
 import MenuView from './view/menu.js';
 import StatsView from './view/stats.js';
 import FooterStatsView from './view/footer-stats.js';
 
 import { createMovieMock } from './mock/movie.js';
 import { render, RenderPosition } from './utils/render.js';
-import { getUserRank } from './utils/user-rank.js';
 
 import FilterPresenter from './presenter/filter.js';
 import BoardPresenter from './presenter/board.js';
@@ -22,15 +20,9 @@ const siteHeaderElement = siteBodyElement.querySelector('.header');
 const siteFooterStatsElement = siteBodyElement.querySelector('.footer__statistics');
 
 const movies = new Array(MOVIES_COUNT).fill().map(() => createMovieMock());
-const userRank = getUserRank(movies);
 
 const menuComponent = new MenuView();
 const statsComponent = new StatsView(movies.filter((movie) => movie.userDetails.isHistory));
-const userRankComponent = new UserRankView(userRank);
-
-if (movies.length) {
-  render(siteHeaderElement, userRankComponent, RenderPosition.BEFOREEND);
-}
 
 const movieModel = new MovieModel();
 const filterModel = new FilterModel();
@@ -44,11 +36,10 @@ const onStatsClick = () => {
 
 movieModel.setMovies(movies);
 
-render(siteHeaderElement, userRankComponent, RenderPosition.BEFOREEND);
 render(siteMainElement, menuComponent, RenderPosition.AFTERBEGIN);
 menuComponent.setStatsClickHandler(onStatsClick);
 
-const boardPresenter = new BoardPresenter(siteMainElement, movieModel, filterModel, statsComponent);
+const boardPresenter = new BoardPresenter(siteMainElement, movieModel, filterModel, statsComponent, siteHeaderElement);
 const filterPresenter = new FilterPresenter(menuComponent.getElement(), filterModel, movieModel, boardPresenter, statsComponent, menuComponent);
 
 filterPresenter.init();

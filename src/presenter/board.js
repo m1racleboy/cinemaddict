@@ -3,18 +3,22 @@ import SortListView from '../view/sort-list.js';
 import AllMoviesView from '../view/all-movies.js';
 import NoMovieView from '../view/no-movies.js';
 import ShowMoreButtonView from '../view/show-more-button.js';
+import UserRankView from '../view/user-rank.js';
+
 import MoviePresenter from './movie.js';
 
 import { filter } from '../utils/filter.js';
 import { Sort, UpdateType, UserAction } from '../const.js';
 import { sortMoviesByRating, sortMoviesByDate } from '../utils/movie.js';
 import { render, RenderPosition, remove } from '../utils/render.js';
+import { getUserRank } from '../utils/user-rank.js';
 
 const MOVIES_COUNT_PER_STEP = 5;
 
 export default class Board {
-  constructor(boardContainer, moviesModel, filterModel, statsComponent) {
+  constructor(boardContainer, moviesModel, filterModel, statsComponent, headerElement) {
     this._boardContainer = boardContainer;
+    this._headerElement = headerElement;
 
     this._moviesModel = moviesModel;
     this._filterModel = filterModel;
@@ -28,6 +32,7 @@ export default class Board {
     this._sortComponent = null;
     this._showMoreButtonComponent = null;
 
+    this._userRankComponent = new UserRankView(getUserRank(this._moviesModel.getMovies()));
     this._boardComponent = new MoviesBoardView();
     this._allMoviesComponent = new AllMoviesView();
     this._noMoviesComponent = new NoMovieView();
@@ -105,18 +110,30 @@ export default class Board {
     switch (updateType) {
       case UpdateType.PATCH:
         this._moviePresenter[data.id].init(data);
+        this._updateRating();
         break;
       case UpdateType.MINOR:
         this._clearBoard();
         this._renderBoard();
+        this._updateRating();
         break;
       case UpdateType.MAJOR:
         this._clearBoard({ resetRenderedMovieCount: true, resetSortType: true });
         this._renderBoard();
+        this._updateRating();
         break;
     }
 
     this._statsComponent.updateData({ movies: this._getMovies().filter((movie) => movie.userDetails.isHistory) });
+  }
+
+  _updateRating() {
+    const userRank = getUserRank(this._moviesModel.getMovies());
+    const newUserRank = new UserRankView(userRank);
+
+    this._headerElement.replaceChild(newUserRank.getElement(), this._userRankComponent.getElement());
+
+    this._userRankComponent = newUserRank;
   }
 
   _handleSortTypeChange(sortType) {
@@ -219,6 +236,8 @@ export default class Board {
       this._renderNoMovies();
       return;
     }
+
+    render(this._headerElement, this._userRankComponent, RenderPosition.BEFOREEND);
 
     this._renderSort();
 

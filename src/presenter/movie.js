@@ -1,6 +1,6 @@
 import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
-import { UserAction, UpdateType, MovieCardButtons } from '../const.js';
+import { UpdateType, MovieCardButtons } from '../const.js';
 import { siteBodyElement } from '../main.js';
 import { render, RenderPosition, replace, remove, openPopup } from '../utils/render.js';
 import dayjs from 'dayjs';
@@ -134,7 +134,7 @@ export default class Movie {
 
     const updatedMovie = Object.assign({}, movie, { userDetails: userDetails });
 
-    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.MINOR, updatedMovie);
+    this._changeData(UpdateType.MINOR, updatedMovie);
   }
 
   _handleDeleteCommentClick(movie, commentId) {
@@ -142,7 +142,7 @@ export default class Movie {
     const updatedMovie = Object.assign({}, movie, { comments });
 
     this._popupComponent.updateData({ comments });
-    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.PATCH, updatedMovie);
+    this._changeData(UpdateType.PATCH, updatedMovie);
   }
 
   _handleAddComment(movie, commentData) {
@@ -154,7 +154,7 @@ export default class Movie {
     const updatedMovie = Object.assign({}, movie, { movieComments });
 
     this._commentsModel.addComment(comment);
-    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.PATCH, updatedMovie);
+    this._changeData(UpdateType.PATCH, updatedMovie);
     this._popupComponent.updateComments(this._commentsModel.getComments().slice());
     this._popupComponent.updateData({ movieComments });
   }

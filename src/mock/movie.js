@@ -4,7 +4,7 @@ import { getComment } from './comment.js';
 import { nanoid } from 'nanoid';
 
 const HIGH_RATING = 10;
-const COMMENT_COUNT = 10;
+const COMMENT_COUNT = 7;
 const DESCRIPTIONS = [
   'Похождения Шерлока Холмса и его друга Джона.',
   'Школьнику на лицо упала тетрадь и он начал убивать людей, так он думал, но он находился в шизофренической лечебнице.',
@@ -84,6 +84,19 @@ const COUNTRIES = [
   'Germany',
 ];
 
+const generateCommentsId = () => {
+  const commentsId = Array(COMMENT_COUNT).fill().map((value, index) => index + 1);
+  const commentsNumber = getRandomInteger(0, COMMENT_COUNT);
+
+  return new Array(commentsNumber).fill().map(() => {
+    const randomId = getRandomArrayElement(commentsId);
+
+    commentsId.splice(commentsId.indexOf(randomId), 1);
+
+    return randomId;
+  });
+};
+
 export const createMovieMock = () => {
   const title = getRandomArrayElement(TITLES);
   const ratingA = getRandomInteger(0, HIGH_RATING);
@@ -118,7 +131,7 @@ export const createMovieMock = () => {
       date: date,
       releaseCountry: getRandomArrayElement(COUNTRIES),
     },
-    comments: comments,
+    comments: generateCommentsId(),
     userDetails: {
       isWatchList: Boolean(getRandomInteger(0, 1)),
       isHistory: watched,

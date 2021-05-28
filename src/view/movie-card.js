@@ -2,7 +2,7 @@ import dayjs from 'dayjs';
 
 import AbstractView from './abstract.js';
 
-import { PopupButtons } from '../const.js';
+import { MovieCardButtons } from '../const.js';
 import { getDuration } from '../utils/stats.js';
 
 const MAX_DESCRIPTION_LENGTH = 139;
@@ -34,11 +34,11 @@ const createMovieCardTemplate = (movie = {}) => {
             <a class="film-card__comments">${comments.length} ${comments.length === 1 ? 'comment' : 'comments'}</a>
             <div class="film-card__controls">
               <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist${isWatchList ? CONTROL_ACTIVE : ''}"
-              data-control="${PopupButtons.WATCH_LIST}" type="button">Add to watchlist</button>
+              data-control="${MovieCardButtons.WATCH_LIST}" type="button">Add to watchlist</button>
               <button class="film-card__controls-item button film-card__controls-item--mark-as-watched${isHistory ? CONTROL_ACTIVE : ''}"
-              data-control="${PopupButtons.WATCHED}" type="button">Mark as watched</button>
+              data-control="${MovieCardButtons.WATCHED}" type="button">Mark as watched</button>
               <button class="film-card__controls-item button film-card__controls-item--favorite${isFavorite ? CONTROL_ACTIVE : ''}"
-              data-control="${PopupButtons.FAVORITE}" type="button">Mark as favorite</button>
+              data-control="${MovieCardButtons.FAVORITE}" type="button">Mark as favorite</button>
             </div>
           </article>`;
 };

@@ -1,7 +1,10 @@
 import dayjs from 'dayjs';
 import he from 'he';
+
 import SmartView from './smart.js';
-import { EMOJIS, PopupButtons } from '../const.js';
+
+import { getComments } from '../utils/comment.js';
+import { EMOJIS, MovieCardButtons } from '../const.js';
 import { getDuration } from '../utils/stats.js';
 
 const createCommentTemplate = (comments) => {
@@ -12,7 +15,7 @@ const createCommentTemplate = (comments) => {
     return date1.diff(date2);
   });
 
-  return Object.values(comments).map(({ id, author, comment, date, emotion }) =>
+  return comments.map(({ id, author, comment, date, emotion }) =>
     `<li class='film-details__comment'>
       <span class='film-details__comment-emoji'>
         <img src='./images/emoji/${emotion}.png' width='55' height='55' alt='emoji-${emotion}'>
@@ -36,7 +39,7 @@ const createEmojiListTemplate = (checkedEmoji) => {
                       </label>`).join('');
 };
 
-const createPopupTemplate = (movie) => {
+const createPopupTemplate = (movie, allComments) => {
   const {
     movieInfo: {
       title, poster, ageRating, rating, director, writers, actors, genre, description, duration, alternativeTitle,
@@ -54,7 +57,8 @@ const createPopupTemplate = (movie) => {
   } = movie;
 
   const commentsCount = comments.length;
-  const commentsTemplate = createCommentTemplate(comments);
+  const commentsList = getComments(comments, allComments);
+  const commentsTemplate = createCommentTemplate(commentsList);
 
   return `<section class='film-details'>
             <form class='film-details__inner' action='' method='get'>
@@ -113,15 +117,15 @@ const createPopupTemplate = (movie) => {
                 </div>
                 <section class='film-details__controls'>
                   <input type="checkbox" class="film-details__control-input visually-hidden" id="watchlist" name="watchlist"
-                  data-control="${PopupButtons.WATCH_LIST}" ${isWatchList ? 'checked' : ''}>
+                  data-control="${MovieCardButtons.WATCH_LIST}" ${isWatchList ? 'checked' : ''}>
                   <label for="watchlist" class="film-details__control-label film-details__control-label--watchlist">Add to watchlist</label>
 
                   <input type="checkbox" class="film-details__control-input visually-hidden" id="watched" name="watched"
-                  data-control="${PopupButtons.WATCHED}" ${isHistory ? 'checked' : ''}>
+                  data-control="${MovieCardButtons.WATCHED}" ${isHistory ? 'checked' : ''}>
                   <label for="watched" class="film-details__control-label film-details__control-label--watched">Already watched</label>
 
                   <input type="checkbox" class="film-details__control-input visually-hidden" id="favorite" name="favorite"
-                  data-control="${PopupButtons.FAVORITE}" ${isFavorite ? 'checked' : ''}>
+                  data-control="${MovieCardButtons.FAVORITE}" ${isFavorite ? 'checked' : ''}>
                   <label for="favorite" class="film-details__control-label film-details__control-label--favorite">Add to favorites</label>
                 </section>
               </div>
@@ -149,10 +153,11 @@ const createPopupTemplate = (movie) => {
 };
 
 export default class Popup extends SmartView {
-  constructor(movie) {
+  constructor(movie, comments) {
     super();
 
     this._data = movie;
+    this._comments = comments;
     this._element = null;
 
     this._handleClosePopup = this._handleClosePopup.bind(this);
@@ -161,7 +166,7 @@ export default class Popup extends SmartView {
   }
 
   getTemplate() {
-    return createPopupTemplate(this._data);
+    return createPopupTemplate(this._data, this._comments);
   }
 
   restoreHandlers() {

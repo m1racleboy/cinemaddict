@@ -36,7 +36,7 @@ export const StatsFilter = {
   YEAR: 'year',
 };
 
-export const PopupButtons = {
+export const MovieCardButtons = {
   WATCH_LIST: 'isWatchList',
   WATCHED: 'isHistory',
   FAVORITE: 'isFavorite',

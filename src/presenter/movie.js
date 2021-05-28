@@ -1,6 +1,6 @@
 import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
-import { UserAction, UpdateType, PopupButtons } from '../const.js';
+import { UserAction, UpdateType, MovieCardButtons } from '../const.js';
 import { siteBodyElement } from '../main.js';
 import { render, RenderPosition, replace, remove, openPopup } from '../utils/render.js';
 import dayjs from 'dayjs';
@@ -13,10 +13,12 @@ const Mode = {
 };
 
 export default class Movie {
-  constructor(container, changeData, changeMode) {
+  constructor(container, changeData, changeMode, commentsModel) {
     this._container = container;
     this._changeData = changeData;
     this._changeMode = changeMode;
+
+    this._commentsModel = commentsModel;
 
     this._movieCardComponent = null;
     this._popupComponent = null;
@@ -29,6 +31,7 @@ export default class Movie {
 
   init(movie) {
     this._movie = movie;
+    this._comments = this._commentsModel.getComments().slice();
 
     const prevMovieCardComponent = this._movieCardComponent;
     this._movieCardComponent = new MovieCardView(movie);
@@ -65,8 +68,7 @@ export default class Movie {
     this._mode = Mode.POPUP;
 
     const prevPopupComponent = this._popupComponent;
-    this._popupComponent = new PopupView(this._movie);
-
+    this._popupComponent = new PopupView(this._movie, this._comments);
     this._popupComponent.setClosePopupHandler(this._handleClosePopupClick);
     this._popupComponent.setControlsChangeHandler((control) => {
       this._handleClickControls(this._movie, control);
@@ -117,7 +119,7 @@ export default class Movie {
     userDetails[control] = !userDetails[control];
 
 
-    if (control === PopupButtons.WATCHED) {
+    if (control === MovieCardButtons.WATCHED) {
       userDetails.watchingDate = userDetails.isHistory ? dayjs().format() : null;
     }
 

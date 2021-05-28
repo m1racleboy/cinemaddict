@@ -67,5 +67,10 @@ export const openPopup = (popup) => {
   if (popup instanceof Abstract) {
     popup = popup.getElement();
   }
+
+  if (siteBodyElement.contains(document.querySelector('.film-details'))) {
+    document.querySelector('.film-details').remove();
+  }
+
   siteBodyElement.appendChild(popup);
 };

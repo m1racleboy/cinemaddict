@@ -4,6 +4,7 @@ import { UserAction, UpdateType, MovieCardButtons } from '../const.js';
 import { siteBodyElement } from '../main.js';
 import { render, RenderPosition, replace, remove, openPopup } from '../utils/render.js';
 import dayjs from 'dayjs';
+import { addNewComment } from '../utils/comment.js';
 
 const ESCAPE_KEY = 'Escape';
 
@@ -65,13 +66,22 @@ export default class Movie {
 
   _openPopup() {
     this._changeMode();
+
     this._mode = Mode.POPUP;
 
     const prevPopupComponent = this._popupComponent;
     this._popupComponent = new PopupView(this._movie, this._comments);
+
     this._popupComponent.setClosePopupHandler(this._handleClosePopupClick);
     this._popupComponent.setControlsChangeHandler((control) => {
       this._handleClickControls(this._movie, control);
+    });
+    this._popupComponent.setDeleteCommentClickHandler((commentId) => {
+      this._handleDeleteCommentClick(this._movie, commentId);
+    });
+
+    this._popupComponent.setAddCommentHandler((commentData) => {
+      this._handleAddComment(this._movie, commentData);
     });
     this._popupComponent.setEmojiChangeHandler();
 
@@ -118,7 +128,6 @@ export default class Movie {
     const userDetails = Object.assign(movie.userDetails);
     userDetails[control] = !userDetails[control];
 
-
     if (control === MovieCardButtons.WATCHED) {
       userDetails.watchingDate = userDetails.isHistory ? dayjs().format() : null;
     }
@@ -126,6 +135,28 @@ export default class Movie {
     const updatedMovie = Object.assign({}, movie, { userDetails: userDetails });
 
     this._changeData(UserAction.UPDATE_MOVIE, UpdateType.MINOR, updatedMovie);
+  }
+
+  _handleDeleteCommentClick(movie, commentId) {
+    const comments = movie.comments.filter((existedId) => String(existedId) !== String(commentId));
+    const updatedMovie = Object.assign({}, movie, { comments });
+
+    this._popupComponent.updateData({ comments });
+    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.PATCH, updatedMovie);
+  }
+
+  _handleAddComment(movie, commentData) {
+    const comment = addNewComment(commentData);
+    const movieComments = movie.comments;
+
+    movieComments.push(comment.id);
+
+    const updatedMovie = Object.assign({}, movie, { movieComments });
+
+    this._commentsModel.addComment(comment);
+    this._changeData(UserAction.UPDATE_MOVIE, UpdateType.PATCH, updatedMovie);
+    this._popupComponent.updateComments(this._commentsModel.getComments().slice());
+    this._popupComponent.updateData({ movieComments });
   }
 }
 

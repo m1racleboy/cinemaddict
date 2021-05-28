@@ -1,13 +1,13 @@
 import { nanoid } from 'nanoid';
 import dayjs from 'dayjs';
 
-export const addNewComment = () => {
+export const addNewComment = (commentData) => {
   const comment = {
     id: nanoid(),
     author: 'Me',
-    comment: '',
+    comment: commentData.get('comment'),
     date: dayjs(),
-    emotion: null,
+    emotion: commentData.get('comment-emoji'),
   };
 
   return comment;

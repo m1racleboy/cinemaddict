@@ -98,12 +98,6 @@ export default class Board {
       case UserAction.UPDATE_MOVIE:
         this._moviesModel.updateMovie(updateType, update);
         break;
-      case UserAction.ADD_COMMENT:
-        this._commentsModel.addComment(updateType, update);//wasfixed
-        break;
-      case UserAction.DELETE_COMMENT:
-        this._commentsModel.deleteComment(updateType, update);//wasfixed
-        break;
     }
   }
 

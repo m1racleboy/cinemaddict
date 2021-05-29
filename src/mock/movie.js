@@ -4,7 +4,7 @@ import { getComment } from './comment.js';
 import { nanoid } from 'nanoid';
 
 const HIGH_RATING = 10;
-const COMMENT_COUNT = 10;
+const COMMENT_COUNT = 7;
 const DESCRIPTIONS = [
   'Похождения Шерлока Холмса и его друга Джона.',
   'Школьнику на лицо упала тетрадь и он начал убивать людей, так он думал, но он находился в шизофренической лечебнице.',
@@ -84,12 +84,25 @@ const COUNTRIES = [
   'Germany',
 ];
 
+const generateCommentsId = () => {
+  const commentsId = Array(COMMENT_COUNT).fill().map((value, index) => index + 1);
+  const commentsNumber = getRandomInteger(0, COMMENT_COUNT);
+
+  return new Array(commentsNumber).fill().map(() => {
+    const randomId = getRandomArrayElement(commentsId);
+
+    commentsId.splice(commentsId.indexOf(randomId), 1);
+
+    return randomId;
+  });
+};
+
 export const createMovieMock = () => {
   const title = getRandomArrayElement(TITLES);
   const ratingA = getRandomInteger(0, HIGH_RATING);
   const ratingB = +`${ratingA === 10 ? ratingA : ratingA + `.${getRandomInteger(0, 9)}`}`;
   const comments = [];
-
+  const watched = Boolean(getRandomInteger(0, 1));
   for (let i = 0; i < getRandomInteger(0, COMMENT_COUNT); i++) {
     comments[i] = getComment();
   }
@@ -101,28 +114,29 @@ export const createMovieMock = () => {
 
   return {
     id: nanoid(),
-    movie_info: {
+    movieInfo: {
       title: title,
+      alternativeTitle: title,
       rating: ratingB,
       poster: getRandomArrayElement(POSTERS),
-      age_rating: getRandomArrayElement(AGE_RATINGS),
+      ageRating: getRandomArrayElement(AGE_RATINGS),
       director: getRandomArrayElement(DIRECTORS),
-      writers: getRandomArray(WRITERS, getRandomInteger(1, 4)).join(', '),
-      actors: getRandomArray(ACTORS, getRandomInteger(1, 6)).join(', '),
+      writers: getRandomArray(WRITERS, getRandomInteger(1, 4)),
+      actors: getRandomArray(ACTORS, getRandomInteger(1, 6)),
       duration: getRandomInteger(10, 241),
-      genre: getRandomArray(GENRES, getRandomInteger(1, 6)).join(', '),
+      genre: getRandomArray(GENRES, getRandomInteger(1, 6)),
       description: getRandomArrayElement(DESCRIPTIONS),
     },
     release: {
       date: date,
-      release_country: getRandomArrayElement(COUNTRIES),
+      releaseCountry: getRandomArrayElement(COUNTRIES),
     },
-    comments: comments,
-    user_details: {
+    comments: generateCommentsId(),
+    userDetails: {
       isWatchList: Boolean(getRandomInteger(0, 1)),
-      isHistory: Boolean(getRandomInteger(0, 1)),
+      isHistory: watched,
       isFavorite: Boolean(getRandomInteger(0, 1)),
-      watching_date: dayjs().toDate(),
+      watchingDate: watched ? dayjs(getRandomInteger(+dayjs().subtract(12, 'month'), +dayjs())).format() : null,
     },
   };
 };

@@ -2,11 +2,11 @@ const movieToFilterMap = {
   all: (movies) => movies
     .filter((movie) => movie).length,
   watchlist: (movies) => movies
-    .filter((movie) => movie.user_details.isWatchList).length,
+    .filter((movie) => movie.userDetails.isWatchList).length,
   history: (movies) => movies
-    .filter((movie) => movie.user_details.isHistory).length,
+    .filter((movie) => movie.userDetails.isHistory).length,
   favorites: (movies) => movies
-    .filter((movie) => movie.user_details.isFavorite).length,
+    .filter((movie) => movie.userDetails.isFavorite).length,
 };
 
 export const createFilter = (movies) => {

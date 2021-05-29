@@ -1,7 +1,10 @@
 import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
+import { UpdateType, MovieCardButtons } from '../const.js';
 import { siteBodyElement } from '../main.js';
 import { render, RenderPosition, replace, remove, openPopup } from '../utils/render.js';
+import dayjs from 'dayjs';
+import { addNewComment } from '../utils/comment.js';
 
 const ESCAPE_KEY = 'Escape';
 
@@ -11,10 +14,12 @@ const Mode = {
 };
 
 export default class Movie {
-  constructor(container, changeData, changeMode) {
+  constructor(container, changeData, changeMode, commentsModel) {
     this._container = container;
     this._changeData = changeData;
     this._changeMode = changeMode;
+
+    this._commentsModel = commentsModel;
 
     this._movieCardComponent = null;
     this._popupComponent = null;
@@ -23,23 +28,19 @@ export default class Movie {
     this._handleOpenPopupClick = this._handleOpenPopupClick.bind(this);
     this._handleClosePopupClick = this._handleClosePopupClick.bind(this);
     this._escKeyDownHandler = this._escKeyDownHandler.bind(this);
-
-    this._handleWatchListClick = this._handleWatchListClick.bind(this);
-    this._handleHistoryClick = this._handleHistoryClick.bind(this);
-    this._handleFavoritesClick = this._handleFavoritesClick.bind(this);
-    this._handleAddComment = this._handleAddComment.bind(this);
   }
 
   init(movie) {
     this._movie = movie;
+    this._comments = this._commentsModel.getComments().slice();
 
     const prevMovieCardComponent = this._movieCardComponent;
     this._movieCardComponent = new MovieCardView(movie);
 
     this._movieCardComponent.setOpenPopupHandler(this._handleOpenPopupClick);
-    this._movieCardComponent.setWatchListClickHandler(this._handleWatchListClick);
-    this._movieCardComponent.setHistoryClickHandler(this._handleHistoryClick);
-    this._movieCardComponent.setFavoritesClickHandler(this._handleFavoritesClick);
+    this._movieCardComponent.setControlsClickHandler((control) => {
+      this._handleClickControls(this._movie, control);
+    });
 
     if (prevMovieCardComponent === null) {
       render(this._container, this._movieCardComponent, RenderPosition.BEFOREEND);
@@ -65,16 +66,24 @@ export default class Movie {
 
   _openPopup() {
     this._changeMode();
+
     this._mode = Mode.POPUP;
 
     const prevPopupComponent = this._popupComponent;
-    this._popupComponent = new PopupView(this._movie);
+    this._popupComponent = new PopupView(this._movie, this._comments);
 
     this._popupComponent.setClosePopupHandler(this._handleClosePopupClick);
-    this._popupComponent.setWatchListClickHandler(this._handleWatchListClick);
-    this._popupComponent.setHistoryClickHandler(this._handleHistoryClick);
-    this._popupComponent.setFavoritesClickHandler(this._handleFavoritesClick);
-    this._popupComponent.setAddCommentHandler(this._handleAddComment);
+    this._popupComponent.setControlsChangeHandler((control) => {
+      this._handleClickControls(this._movie, control);
+    });
+    this._popupComponent.setDeleteCommentClickHandler((commentId) => {
+      this._handleDeleteCommentClick(this._movie, commentId);
+    });
+
+    this._popupComponent.setAddCommentHandler((commentData) => {
+      this._handleAddComment(this._movie, commentData);
+    });
+    this._popupComponent.setEmojiChangeHandler();
 
     if (prevPopupComponent === null) {
       openPopup(this._popupComponent);
@@ -93,7 +102,6 @@ export default class Movie {
   }
 
   _closePopup() {
-    this._popupComponent.reset(this._movie);
     this._popupComponent.getElement().remove();
     this._popupComponent = null;
     this._mode = Mode.DEFAULT;
@@ -116,42 +124,39 @@ export default class Movie {
     this._closePopup();
   }
 
-  _handleWatchListClick() {
-    this._changeData({
-      ...this._movie,
-      user_details: {
-        ...this._movie.user_details,
-        isWatchList: !this._movie.user_details.isWatchList,
-      },
-    });
+  _handleClickControls(movie, control) {
+    const userDetails = Object.assign(movie.userDetails);
+    userDetails[control] = !userDetails[control];
+
+    if (control === MovieCardButtons.WATCHED) {
+      userDetails.watchingDate = userDetails.isHistory ? dayjs().format() : null;
+    }
+
+    const updatedMovie = Object.assign({}, movie, { userDetails: userDetails });
+
+    this._changeData(UpdateType.MINOR, updatedMovie);
   }
 
-  _handleHistoryClick() {
-    this._changeData({
-      ...this._movie,
-      user_details: {
-        ...this._movie.user_details,
-        isHistory: !this._movie.user_details.isHistory,
-      },
-    });
+  _handleDeleteCommentClick(movie, commentId) {
+    const comments = movie.comments.filter((existedId) => String(existedId) !== String(commentId));
+    const updatedMovie = Object.assign({}, movie, { comments });
+
+    this._popupComponent.updateData({ comments });
+    this._changeData(UpdateType.PATCH, updatedMovie);
   }
 
-  _handleFavoritesClick() {
-    this._changeData({
-      ...this._movie,
-      user_details: {
-        ...this._movie.user_details,
-        isFavorite: !this._movie.user_details.isFavorite,
-      },
-    });
-  }
+  _handleAddComment(movie, commentData) {
+    const comment = addNewComment(commentData);
+    const movieComments = movie.comments;
 
-  _handleAddComment(data) {
-    const comments = [...data.comments];
-    this._changeData({
-      ...this._movie,
-      comments: comments,
-    });
+    movieComments.push(comment.id);
+
+    const updatedMovie = Object.assign({}, movie, { movieComments });
+
+    this._commentsModel.addComment(comment);
+    this._changeData(UpdateType.PATCH, updatedMovie);
+    this._popupComponent.updateComments(this._commentsModel.getComments().slice());
+    this._popupComponent.updateData({ movieComments });
   }
 }
 

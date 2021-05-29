@@ -1,37 +1,56 @@
 import AbstractView from './abstract.js';
+import { FilterType, CLASS_NAVIGATION_ACTIVE } from '../const';
 
-const createFilterItemTemplate = (filters) => {
-  const { name, count } = filters;
-  String.prototype.capitalize = function () {
-    return this.charAt(0).toUpperCase() + this.slice(1);
-  };
-  if (name === 'all') {
-    return `<a href="#${name}" class="main-navigation__item main-navigation__item--active">${name.capitalize()} movies</a>`;
-  }
-  return `<a href="#${name}" class="main-navigation__item">${name.capitalize()} <span class="main-navigation__item-count">${count}</span></a>`;
+const createFilterItemTemplate = (filter, currentFilterType) => {
+  const { type, name, count } = filter;
+
+  return `<a href="#${type}"
+            class="main-navigation__item ${type === currentFilterType ? CLASS_NAVIGATION_ACTIVE : ''}"
+            data-type="${type}">
+            ${name} ${type !== FilterType.ALL ? `<span class="main-navigation__item-count">${count}</span>` : ''}
+          </a>`;
 };
 
-const createFilterTemplate = (filterItems) => {
+const createFilterTemplate = (filterItems, currentFilterType) => {
   const filterItemsTemplate = filterItems
-    .map((filter) => createFilterItemTemplate(filter))
+    .map((filter) => createFilterItemTemplate(filter, currentFilterType))
     .join('');
 
-  return `<nav class="main-navigation">
-            <div class="main-navigation__items">
-              ${filterItemsTemplate}
-            </div>
-            <a href="#stats" class="main-navigation__additional">Stats</a>
-          </nav>`;
+  return `<div class="main-navigation__items">
+            ${filterItemsTemplate}
+          </div>`;
 };
 
 export default class FilterList extends AbstractView {
-  constructor(filter) {
+  constructor(filter, currentFilterType) {
     super();
     this._filter = filter;
-    this._element = null;
+    this._currentFilter = currentFilterType;
+
+    this._handleFilterTypeChange = this._handleFilterTypeChange.bind(this);
   }
 
   getTemplate() {
-    return createFilterTemplate(this._filter);
+    return createFilterTemplate(this._filter, this._currentFilter);
+  }
+
+  removeActiveClass() {
+    const filterButtons = this.getElement().querySelectorAll('.main-navigation__item');
+
+    for (let i = 0; i < filterButtons.length; i++) {
+      filterButtons[i].classList.remove(CLASS_NAVIGATION_ACTIVE);
+    }
+  }
+
+  _handleFilterTypeChange(evt) {
+    if (evt.target.dataset.type) {
+      evt.preventDefault();
+      this._callback.filterTypeChange(evt.target.dataset.type);
+    }
+  }
+
+  setFilterTypeChangeHandler(callback) {
+    this._callback.filterTypeChange = callback;
+    this.getElement().addEventListener('click', this._handleFilterTypeChange);
   }
 }

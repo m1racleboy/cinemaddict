@@ -1,4 +1,5 @@
 import { createElement } from '../utils/render';
+import { CLASS_VISUALLY_HIDDEN } from '../const.js';
 
 export default class Abstract {
   constructor() {
@@ -24,5 +25,13 @@ export default class Abstract {
 
   removeElement() {
     this._element = null;
+  }
+
+  show() {
+    this.getElement().classList.remove(CLASS_VISUALLY_HIDDEN);
+  }
+
+  hide() {
+    this.getElement().classList.add(CLASS_VISUALLY_HIDDEN);
   }
 }

@@ -163,11 +163,9 @@ export default class Movie {
     if (this._mode === Mode.POPUP) {
       this._changeData(UpdateType.PATCH, updatedMovie);
       this._popupComponent.updateData({ userDetails });
-      return;
     }
     else {
       this._changeData(UpdateType.MINOR, updatedMovie);
-      return;
     }
   }
 

@@ -2,6 +2,8 @@ import dayjs from 'dayjs';
 import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
 
+import CommentsModel from '../model/comment.js';
+
 import { siteBodyElement } from '../main.js';
 
 import { UpdateType, MovieCardButtons } from '../const.js';
@@ -15,12 +17,12 @@ const Mode = {
 };
 
 export default class Movie {
-  constructor(container, changeData, changeMode, commentsModel, api) {
+  constructor(container, changeData, changeMode, api) {
     this._container = container;
     this._changeData = changeData;
     this._changeMode = changeMode;
 
-    this._commentsModel = commentsModel;
+    this._commentsModel = new CommentsModel();
 
     this._api = api;
 
@@ -158,7 +160,15 @@ export default class Movie {
 
     const updatedMovie = Object.assign({}, this._movie, { userDetails: userDetails });
 
-    this._changeData(UpdateType.MINOR, updatedMovie);
+    if (this._mode === Mode.POPUP) {
+      this._changeData(UpdateType.PATCH, updatedMovie);
+      this._popupComponent.updateData({ userDetails });
+      return;
+    }
+    else {
+      this._changeData(UpdateType.MINOR, updatedMovie);
+      return;
+    }
   }
 
   _handleDeleteCommentClick(commentId) {

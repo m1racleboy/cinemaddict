@@ -17,12 +17,11 @@ import { getUserRank } from '../utils/user-rank.js';
 const MOVIES_COUNT_PER_STEP = 5;
 
 export default class Board {
-  constructor(boardContainer, moviesModel, filterModel, statsComponent, headerElement, commentsModel, api) {
+  constructor(boardContainer, moviesModel, filterModel, statsComponent, headerElement, api) {
     this._boardContainer = boardContainer;
     this._headerElement = headerElement;
 
     this._moviesModel = moviesModel;
-    this._commentsModel = commentsModel;
     this._filterModel = filterModel;
 
     this._moviePresenter = {};
@@ -113,7 +112,7 @@ export default class Board {
   }
 
   _renderMovie(movie, container) {
-    const moviePresenter = new MoviePresenter(container, this._handleViewAction, this._handleModeChange, this._commentsModel, this._api);
+    const moviePresenter = new MoviePresenter(container, this._handleViewAction, this._handleModeChange, this._api);
     moviePresenter.init(movie);
     this._moviePresenter[movie.id] = moviePresenter;
   }

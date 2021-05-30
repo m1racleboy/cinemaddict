@@ -9,7 +9,6 @@ import FilterPresenter from './presenter/filter.js';
 import BoardPresenter from './presenter/board.js';
 
 import FilterModel from './model/filter.js';
-import CommentModel from './model/comment.js';
 import MovieModel from './model/movie.js';
 
 import Api from './api/api.js';
@@ -28,7 +27,6 @@ const menuComponent = new MenuView();
 const statsComponent = new StatsView([]);
 
 const movieModel = new MovieModel();
-const commentModel = new CommentModel();
 const filterModel = new FilterModel();
 
 const handleStatsClick = () => {
@@ -38,7 +36,7 @@ const handleStatsClick = () => {
   filterPresenter.removeActiveClass();
 };
 
-const boardPresenter = new BoardPresenter(siteMainElement, movieModel, filterModel, statsComponent, siteHeaderElement, commentModel, api);
+const boardPresenter = new BoardPresenter(siteMainElement, movieModel, filterModel, statsComponent, siteHeaderElement, api);
 const filterPresenter = new FilterPresenter(menuComponent.getElement(), filterModel, movieModel, boardPresenter, statsComponent, menuComponent);
 
 filterPresenter.init();

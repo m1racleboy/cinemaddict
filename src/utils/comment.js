@@ -1,12 +1,6 @@
-import { nanoid } from 'nanoid';
-import dayjs from 'dayjs';
-
 export const addNewComment = (commentData) => {
   const comment = {
-    id: nanoid(),
-    author: 'Me',
     comment: commentData.get('comment'),
-    date: dayjs(),
     emotion: commentData.get('comment-emoji'),
   };
 

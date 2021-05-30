@@ -2,8 +2,7 @@ import MenuView from './view/menu.js';
 import StatsView from './view/stats.js';
 import FooterStatsView from './view/footer-stats.js';
 
-import { createMovieMock } from './mock/movie.js';
-import { getComment } from './mock/comment.js';
+import { UpdateType } from './const.js';
 import { render, RenderPosition } from './utils/render.js';
 
 import FilterPresenter from './presenter/filter.js';
@@ -13,20 +12,20 @@ import FilterModel from './model/filter.js';
 import CommentModel from './model/comment.js';
 import MovieModel from './model/movie.js';
 
+import Api from './api/api.js';
 
-const MOVIES_COUNT = 30;
-const COMMENTS_COUNT = 7;
+const AUTHORIZATION = 'Basic zxcSF-48lgnEZtpMID-v';
+const END_POINT = 'https://14.ecmascript.pages.academy/cinemaddict';
+
+const api = new Api(END_POINT, AUTHORIZATION);
 
 export const siteBodyElement = document.querySelector('body');
 const siteMainElement = siteBodyElement.querySelector('.main');
 const siteHeaderElement = siteBodyElement.querySelector('.header');
 const siteFooterStatsElement = siteBodyElement.querySelector('.footer__statistics');
 
-const movies = new Array(MOVIES_COUNT).fill().map(() => createMovieMock());
-const comments = new Array(COMMENTS_COUNT).fill().map((value, index) => getComment(index));
-
 const menuComponent = new MenuView();
-const statsComponent = new StatsView(movies.filter((movie) => movie.userDetails.isHistory));
+const statsComponent = new StatsView([]);
 
 const movieModel = new MovieModel();
 const commentModel = new CommentModel();
@@ -39,13 +38,7 @@ const handleStatsClick = () => {
   filterPresenter.removeActiveClass();
 };
 
-movieModel.setMovies(movies);
-commentModel.setComments(comments);
-
-render(siteMainElement, menuComponent, RenderPosition.AFTERBEGIN);
-menuComponent.setStatsClickHandler(handleStatsClick);
-
-const boardPresenter = new BoardPresenter(siteMainElement, movieModel, filterModel, statsComponent, siteHeaderElement, commentModel);
+const boardPresenter = new BoardPresenter(siteMainElement, movieModel, filterModel, statsComponent, siteHeaderElement, commentModel, api);
 const filterPresenter = new FilterPresenter(menuComponent.getElement(), filterModel, movieModel, boardPresenter, statsComponent, menuComponent);
 
 filterPresenter.init();
@@ -57,5 +50,22 @@ statsComponent.setFiltersChangeHandler((period) => {
   statsComponent.show();
 });
 
-render(siteMainElement, statsComponent, RenderPosition.BEFOREEND);
-render(siteFooterStatsElement, new FooterStatsView(movies.length), RenderPosition.BEFOREEND);
+api.getMovies()
+  .then((movies) => {
+    movieModel.setMovies(UpdateType.INIT, movies);
+
+    render(siteMainElement, menuComponent, RenderPosition.AFTERBEGIN);
+    menuComponent.setStatsClickHandler(handleStatsClick);
+
+    render(siteMainElement, statsComponent, RenderPosition.BEFOREEND);
+    render(siteFooterStatsElement, new FooterStatsView(movies.length), RenderPosition.BEFOREEND);
+  })
+  .catch(() => {
+    movieModel.setMovies(UpdateType.INIT, []);
+
+    render(siteMainElement, menuComponent, RenderPosition.AFTERBEGIN);
+    menuComponent.setStatsClickHandler(handleStatsClick);
+
+    render(siteMainElement, statsComponent, RenderPosition.BEFOREEND);
+    render(siteFooterStatsElement, new FooterStatsView(0), RenderPosition.BEFOREEND);
+  });

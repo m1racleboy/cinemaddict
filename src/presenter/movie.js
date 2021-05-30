@@ -1,10 +1,11 @@
+import dayjs from 'dayjs';
 import MovieCardView from '../view/movie-card.js';
 import PopupView from '../view/popup.js';
-import { UpdateType, MovieCardButtons } from '../const.js';
+
 import { siteBodyElement } from '../main.js';
+
+import { UpdateType, MovieCardButtons } from '../const.js';
 import { render, RenderPosition, replace, remove, openPopup } from '../utils/render.js';
-import dayjs from 'dayjs';
-import { addNewComment } from '../utils/comment.js';
 
 const ESCAPE_KEY = 'Escape';
 
@@ -14,12 +15,14 @@ const Mode = {
 };
 
 export default class Movie {
-  constructor(container, changeData, changeMode, commentsModel) {
+  constructor(container, changeData, changeMode, commentsModel, api) {
     this._container = container;
     this._changeData = changeData;
     this._changeMode = changeMode;
 
     this._commentsModel = commentsModel;
+
+    this._api = api;
 
     this._movieCardComponent = null;
     this._popupComponent = null;
@@ -32,14 +35,13 @@ export default class Movie {
 
   init(movie) {
     this._movie = movie;
-    this._comments = this._commentsModel.getComments().slice();
 
     const prevMovieCardComponent = this._movieCardComponent;
     this._movieCardComponent = new MovieCardView(movie);
 
     this._movieCardComponent.setOpenPopupHandler(this._handleOpenPopupClick);
     this._movieCardComponent.setControlsClickHandler((control) => {
-      this._handleClickControls(this._movie, control);
+      this._handleClickControls(control);
     });
 
     if (prevMovieCardComponent === null) {
@@ -73,16 +75,29 @@ export default class Movie {
     this._popupComponent = new PopupView(this._movie, this._comments);
 
     this._popupComponent.setClosePopupHandler(this._handleClosePopupClick);
+
     this._popupComponent.setControlsChangeHandler((control) => {
-      this._handleClickControls(this._movie, control);
-    });
-    this._popupComponent.setDeleteCommentClickHandler((commentId) => {
-      this._handleDeleteCommentClick(this._movie, commentId);
+      this._handleClickControls(control);
     });
 
-    this._popupComponent.setAddCommentHandler((commentData) => {
-      this._handleAddComment(this._movie, commentData);
+    this._popupComponent.setDeleteCommentClickHandler((commentId) => {
+      this._popupComponent.setState({ deletingCommentId: commentId });
+
+      return this._api.deleteComment(commentId)
+        .then(() => {
+          this._handleDeleteCommentClick(commentId);
+        });
     });
+
+    this._popupComponent.setAddCommentHandler((comment) => {
+      this._popupComponent.setState({ isAddingComment: true });
+
+      return this._api.addComment(comment, this._movie.id)
+        .then((comment) => {
+          this._handleAddComment(comment);
+        });
+    });
+
     this._popupComponent.setEmojiChangeHandler();
 
     if (prevPopupComponent === null) {
@@ -117,46 +132,55 @@ export default class Movie {
   }
 
   _handleOpenPopupClick() {
-    this._openPopup();
+    this._api.getComments(this._movie.id)
+      .then((comments) => {
+        this._commentsModel.setComments(comments);
+        this._comments = this._commentsModel.getComments().slice();
+        this._openPopup();
+      })
+      .catch(() => {
+        this._comments = [];
+        this._openPopup();
+      });
   }
 
   _handleClosePopupClick() {
     this._closePopup();
   }
 
-  _handleClickControls(movie, control) {
-    const userDetails = Object.assign(movie.userDetails);
+  _handleClickControls(control) {
+    const userDetails = Object.assign(this._movie.userDetails);
     userDetails[control] = !userDetails[control];
 
     if (control === MovieCardButtons.WATCHED) {
       userDetails.watchingDate = userDetails.isHistory ? dayjs().format() : null;
     }
 
-    const updatedMovie = Object.assign({}, movie, { userDetails: userDetails });
+    const updatedMovie = Object.assign({}, this._movie, { userDetails: userDetails });
 
     this._changeData(UpdateType.MINOR, updatedMovie);
   }
 
-  _handleDeleteCommentClick(movie, commentId) {
-    const comments = movie.comments.filter((existedId) => String(existedId) !== String(commentId));
-    const updatedMovie = Object.assign({}, movie, { comments });
+  _handleDeleteCommentClick(commentId) {
+    const comments = this._movie.comments.filter((existedId) => String(existedId) !== String(commentId));
+    const updatedMovie = Object.assign({}, this._movie, { comments });
+
+    this._changeData(UpdateType.PATCH, updatedMovie);
 
     this._popupComponent.updateData({ comments });
-    this._changeData(UpdateType.PATCH, updatedMovie);
   }
 
-  _handleAddComment(movie, commentData) {
-    const comment = addNewComment(commentData);
-    const movieComments = movie.comments;
+  _handleAddComment(comment) {
+    const comments = this._movie.comments;
+    comments.push(comment.id);
 
-    movieComments.push(comment.id);
-
-    const updatedMovie = Object.assign({}, movie, { movieComments });
+    const updatedMovie = Object.assign({}, this._movie, { comments });
 
     this._commentsModel.addComment(comment);
     this._changeData(UpdateType.PATCH, updatedMovie);
+
     this._popupComponent.updateComments(this._commentsModel.getComments().slice());
-    this._popupComponent.updateData({ movieComments });
+    this._popupComponent.updateData({ comments });
   }
 }
 

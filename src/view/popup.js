@@ -38,11 +38,12 @@ const createCommentTemplate = (comments, deletingCommentId) => {
   `).join('');
 };
 
-const createEmojiListTemplate = (checkedEmoji) => {
-  return EMOJIS.map((emoji) => `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}' value='${emoji}' ${emoji === checkedEmoji ? 'checked' : ''}>
-                      <label class='film-details__emoji-label' for='emoji-${emoji}'>
-                        <img src='./images/emoji/${emoji}.png' width='30' height='30' alt='emoji'>
-                      </label>`).join('');
+const createEmojiListTemplate = (checkedEmoji, isAddingComment) => {
+  return EMOJIS.map((emoji) => `<input class='film-details__emoji-item visually-hidden' name='comment-emoji' type='radio' id='emoji-${emoji}'
+                                  value='${emoji}' ${emoji === checkedEmoji ? 'checked' : ''}  ${isAddingComment ? 'disabled' : ''}>
+                                <label class='film-details__emoji-label' for='emoji-${emoji}'>
+                                  <img src='./images/emoji/${emoji}.png' width='30' height='30' alt='emoji'>
+                                </label>`).join('');
 };
 
 const createPopupTemplate = (movie, allComments, newComment, states) => {
@@ -151,7 +152,7 @@ const createPopupTemplate = (movie, allComments, newComment, states) => {
                       ${isAddingComment ? 'disabled' : ''}>${commentText ? he.encode(commentText) : ''}</textarea>
                     </label>
                     <div class='film-details__emoji-list'>
-                      ${createEmojiListTemplate(checkedEmoji)}
+                      ${createEmojiListTemplate(checkedEmoji, isAddingComment)}
                     </div>
                   </div>
                 </section>
@@ -285,10 +286,11 @@ export default class Popup extends SmartView {
         const comment = addNewComment(commentData);
         const scrollTop = this.getElement().scrollTop;
 
-        this._resetNewComment();
+        this._newComment.commentText = this.getElement().querySelector('.film-details__comment-input').value;
 
         this._callback.addComment(comment)
           .then(() => {
+            this._resetNewComment();
             this.getElement().scrollTop = scrollTop;
             this.setState({ isAddingComment: false });
           })

@@ -16,3 +16,7 @@ export const getRandomArray = (array, length) => {
   }
   return arrayCopy;
 };
+
+export const isOnline = () => {
+  return window.navigator.onLine;
+};

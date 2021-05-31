@@ -3,7 +3,7 @@ import he from 'he';
 
 import SmartView from './smart.js';
 
-import { getComments, addNewComment } from '../utils/comment.js';
+import { getComments, addNewComment, humanizeCommentDate } from '../utils/comment.js';
 import { getDuration } from '../utils/stats.js';
 import { EMOJIS, MovieCardButtons } from '../const.js';
 
@@ -27,7 +27,7 @@ const createCommentTemplate = (comments, deletingCommentId) => {
         <p class='film-details__comment-text'>${he.encode(comment)}</p>
         <p class='film-details__comment-info'>
           <span class='film-details__comment-author'>${author}</span>
-          <span class='film-details__comment-day'>${dayjs(date).format('YYYY/MM/DD HH:mm')}</span>
+          <span class='film-details__comment-day'>${humanizeCommentDate(date)}</span>
           <button type='button' class='film-details__comment-delete' data-button-delete="${MovieCardButtons.DELETE}" data-comment-id="${id}"
           ${deletingCommentId === id ? 'disabled' : ''}>
           ${deletingCommentId === id ? 'Deleting...' : 'Delete'}

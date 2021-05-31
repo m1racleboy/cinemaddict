@@ -37,8 +37,3 @@ export const MovieCardButtons = {
   FAVORITE: 'isFavorite',
   DELETE: 'delete',
 };
-
-export const StoreDataType = {
-  MOVIES: 'movies',
-  COMMENTS: 'comments',
-};

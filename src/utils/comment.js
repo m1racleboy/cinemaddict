@@ -1,3 +1,6 @@
+import dayjs from 'dayjs';
+import relativeTime from 'dayjs/plugin/relativeTime.js';
+
 export const addNewComment = (commentData) => {
   const comment = {
     comment: commentData.get('comment'),
@@ -17,4 +20,10 @@ export const getComments = (commentsId, commentsList) => {
   }
 
   return comments;
+};
+
+export const humanizeCommentDate = (date) => {
+  dayjs.extend(relativeTime);
+
+  return `${dayjs(date).toNow(true)} ago`;
 };

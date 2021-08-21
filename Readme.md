@@ -1,10 +1,13 @@
-# Project "Cinemaddict" from [htmlacademy](https://htmlacademy.ru/intensive/ecmascript)
-## Проект написан на javascript с применением следующих штучек:
+# Учебный проект "Cinemaddict"
 
-1. Сборка проект на webpack
-2. Паттерн проектирования <b>MVP</b>
-3. Поведенческий паттерн <b>Observer</b>
-4. Структурный паттерн <b>Adapter</b>
-5. Для работы с датами пакет [dayjs](https://day.js.org/)
-6. Для постройки диаграмм на странице статистики пакет [chartjs](https://www.chartjs.org/)
+## Стек: 
+1. JS (ES6)
+2. webpack
+3. [dayjs](https://day.js.org/)
+4. [chartjs](https://www.chartjs.org/)
+
+## Паттерны: 
+1. Паттерн проектирования <b>MVP</b>
+2. Поведенческий паттерн <b>Observer</b>
+3. Структурный паттерн <b>Adapter</b>
 
